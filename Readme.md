@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Anastasiia Erokhina](https://up.htmlacademy.ru/javascript/21/user/1424545).
-* Наставник: `Неизвестно`.
+* Наставник: [Юрий Белобородов](https://htmlacademy.ru/profile/id514591).
 
 ---
 
