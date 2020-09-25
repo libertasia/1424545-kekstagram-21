@@ -38,11 +38,11 @@ const COMMENTS = [
   `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`
 ];
 
+const PICTURES_COUNT = 25;
+
 const userPictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
-
-const usersPictures = document.querySelector(`.pictures`);
 
 const getRandomInt = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -59,24 +59,23 @@ const isPropertyValueUsed = function (propertyName, propertyValue, objArray) {
 
 const generateComments = function (count) {
   let comments = [];
+  let name = ``;
+  let comment = ``;
   for (let i = 0; i < count; i++) {
-    let name = ``;
     do {
       name = USERS_NAMES[getRandomInt(0, USERS_NAMES.length)];
     }
     while (isPropertyValueUsed(`name`, name, comments));
 
-    let avatar = `img/avatar-${getRandomInt(0, 6)}.svg`;
-    let message = ``;
     do {
-      message = COMMENTS[getRandomInt(0, COMMENTS.length)];
+      comment = COMMENTS[getRandomInt(0, COMMENTS.length)];
     }
-    while (isPropertyValueUsed(`message`, message, comments));
+    while (isPropertyValueUsed(`comment`, comment, comments));
 
     comments.push({
-      avatar,
+      avatar: `img/avatar-${getRandomInt(0, 6)}.svg`,
       name,
-      message
+      comment
     });
   }
   return comments;
@@ -84,24 +83,19 @@ const generateComments = function (count) {
 
 const generatePictures = function () {
   let pictures = [];
-  for (let i = 0; i < 25; i++) {
-    let url = ``;
+  let url = ``;
+  for (let i = 0; i < PICTURES_COUNT; i++) {
     do {
-      url = `photos/${getRandomInt(1, 25)}.jpg`;
+      url = `photos/${getRandomInt(1, PICTURES_COUNT)}.jpg`;
     }
     while (isPropertyValueUsed(`url`, url, pictures));
 
-    let likes = getRandomInt(15, 200);
-
-    let comments = generateComments(getRandomInt(1, 6));
-
-    let picture = {
+    pictures.push({
       url,
       description: ``,
-      likes,
-      comments
-    };
-    pictures.push(picture);
+      likes: getRandomInt(15, 200),
+      comments: generateComments(getRandomInt(1, 6))
+    });
   }
   return pictures;
 };
@@ -116,14 +110,17 @@ const createPictureElement = function (picture) {
   return pictureElement;
 };
 
-const createPicturesFragment = function (pictures) {
-  let fragment = document.createDocumentFragment();
-  pictures.forEach((picture) => fragment.appendChild(createPictureElement(picture)));
-  return fragment;
+const renderPictures = function (picturesData) {
+  const fragment = document.createDocumentFragment();
+  const usersPictures = document.querySelector(`.pictures`);
+
+  picturesData.forEach((picture) => {
+    const pictureEl = createPictureElement(picture);
+    fragment.appendChild(pictureEl);
+  });
+
+  usersPictures.appendChild(fragment);
 };
 
-const showPictures = function () {
-  usersPictures.appendChild(createPicturesFragment(generatePictures()));
-};
-
-showPictures();
+const picturesData = generatePictures();
+renderPictures(picturesData);
