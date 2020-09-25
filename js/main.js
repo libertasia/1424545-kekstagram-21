@@ -63,17 +63,17 @@ const generateComments = function (count) {
   let comment = ``;
   for (let i = 0; i < count; i++) {
     do {
-      name = USERS_NAMES[getRandomInt(0, USERS_NAMES.length)];
+      name = USERS_NAMES[getRandomInt(0, USERS_NAMES.length - 1)];
     }
     while (isPropertyValueUsed(`name`, name, comments));
 
     do {
-      comment = COMMENTS[getRandomInt(0, COMMENTS.length)];
+      comment = COMMENTS[getRandomInt(0, COMMENTS.length - 1)];
     }
     while (isPropertyValueUsed(`comment`, comment, comments));
 
     comments.push({
-      avatar: `img/avatar-${getRandomInt(0, 6)}.svg`,
+      avatar: `img/avatar-${getRandomInt(1, 6)}.svg`,
       name,
       comment
     });
@@ -124,3 +124,53 @@ const renderPictures = function (picturesData) {
 
 const picturesData = generatePictures();
 renderPictures(picturesData);
+
+
+//
+
+const createSocialComment = function (commentObj) {
+  const comment = document.createElement(`li`);
+  comment.classList.add(`social__comment`);
+
+  const socialPicture = document.createElement(`img`);
+  socialPicture.classList.add(`social__picture`);
+  socialPicture.src = commentObj.avatar;
+  socialPicture.alt = commentObj.name;
+  socialPicture.width = 35;
+  socialPicture.height = 35;
+
+  const socialText = document.createElement(`p`);
+  socialText.classList.add(`social__text`);
+  socialText.textContent = commentObj.comment;
+
+  comment.append(socialPicture);
+  comment.append(socialText);
+};
+
+const showBigPicture = function (picture) {
+  const bigPicture = document.querySelector(`.big-picture`);
+
+  bigPicture.querySelector(`.big-picture__img`).querySelector(`img`).src = picture.url;
+  bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
+  bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
+  bigPicture.querySelector(`.social__caption`).textContent = picture.description;
+  const socialComments = bigPicture.querySelector(`.social__comments`);
+
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < picture.comments.length; i++) {
+    const comment = createSocialComment(picture.comments[i]);
+    fragment.append(comment);
+  }
+
+  socialComments.innerHTML = ``;
+  socialComments.append(fragment);
+
+  bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
+  bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
+
+  bigPicture.classList.remove(`hidden`);
+  document.querySelector(`body`).classList.add(`modal-open`);
+};
+
+showBigPicture(picturesData[0]);
