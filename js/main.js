@@ -58,7 +58,7 @@ const isPropertyValueUsed = function (propertyName, propertyValue, objArray) {
 };
 
 const generateComments = function (count) {
-  let comments = [];
+  const comments = [];
   let name = ``;
   let comment = ``;
   for (let i = 0; i < count; i++) {
@@ -82,7 +82,7 @@ const generateComments = function (count) {
 };
 
 const generatePictures = function () {
-  let pictures = [];
+  const pictures = [];
   let url = ``;
   for (let i = 0; i < PICTURES_COUNT; i++) {
     do {
@@ -101,7 +101,7 @@ const generatePictures = function () {
 };
 
 const createPictureElement = function (picture) {
-  let pictureElement = userPictureTemplate.cloneNode(true);
+  const pictureElement = userPictureTemplate.cloneNode(true);
 
   pictureElement.querySelector(`.picture__img`).src = picture.url;
   pictureElement.querySelector(`.picture__likes`).textContent = picture.likes;
