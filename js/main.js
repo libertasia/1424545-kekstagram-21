@@ -40,6 +40,8 @@ const COMMENTS = [
 
 const PICTURES_COUNT = 25;
 
+const SOCIAL_PICTURE_SIZE = 35;
+
 const userPictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
@@ -136,8 +138,8 @@ const createSocialComment = function (commentObj) {
   socialPicture.classList.add(`social__picture`);
   socialPicture.src = commentObj.avatar;
   socialPicture.alt = commentObj.name;
-  socialPicture.width = 35;
-  socialPicture.height = 35;
+  socialPicture.width = SOCIAL_PICTURE_SIZE;
+  socialPicture.height = SOCIAL_PICTURE_SIZE;
 
   const socialText = document.createElement(`p`);
   socialText.classList.add(`social__text`);
@@ -145,6 +147,7 @@ const createSocialComment = function (commentObj) {
 
   comment.append(socialPicture);
   comment.append(socialText);
+  return comment;
 };
 
 const showBigPicture = function (picture) {
