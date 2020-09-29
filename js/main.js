@@ -40,9 +40,13 @@ const COMMENTS = [
 
 const PICTURES_COUNT = 25;
 
+const SOCIAL_PICTURE_SIZE = 35;
+
 const userPictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
+
+const bigPicture = document.querySelector(`.big-picture`);
 
 const getRandomInt = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -63,17 +67,17 @@ const generateComments = function (count) {
   let comment = ``;
   for (let i = 0; i < count; i++) {
     do {
-      name = USERS_NAMES[getRandomInt(0, USERS_NAMES.length)];
+      name = USERS_NAMES[getRandomInt(0, USERS_NAMES.length - 1)];
     }
     while (isPropertyValueUsed(`name`, name, comments));
 
     do {
-      comment = COMMENTS[getRandomInt(0, COMMENTS.length)];
+      comment = COMMENTS[getRandomInt(0, COMMENTS.length - 1)];
     }
     while (isPropertyValueUsed(`comment`, comment, comments));
 
     comments.push({
-      avatar: `img/avatar-${getRandomInt(0, 6)}.svg`,
+      avatar: `img/avatar-${getRandomInt(1, 6)}.svg`,
       name,
       comment
     });
@@ -124,3 +128,46 @@ const renderPictures = function (picturesData) {
 
 const picturesData = generatePictures();
 renderPictures(picturesData);
+
+
+//
+
+const createSocialComment = function (commentObj) {
+  return `
+  <li class="social__comment">
+  <img
+    class="social__picture"
+    src="${commentObj.avatar}"
+    alt="${commentObj.name}"
+    width="${SOCIAL_PICTURE_SIZE}" height="${SOCIAL_PICTURE_SIZE}">
+  <p class="social__text">${commentObj.comment}</p>
+  </li>
+  `;
+};
+
+const fillBigPicture = function (picture) {
+  bigPicture.querySelector(`.big-picture__img`).querySelector(`img`).src = picture.url;
+  bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
+  bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
+  bigPicture.querySelector(`.social__caption`).textContent = picture.description;
+
+  const comments = picture.comments.map((comment) => createSocialComment(comment));
+  bigPicture.querySelector(`.social__comments`).innerHTML = comments.join(``);
+};
+
+const hideElements = function () {
+  bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
+  bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
+};
+
+const showBigPicture = function () {
+  bigPicture.classList.remove(`hidden`);
+  document.querySelector(`body`).classList.add(`modal-open`);
+};
+
+
+fillBigPicture(picturesData[0]);
+
+hideElements();
+
+showBigPicture();
