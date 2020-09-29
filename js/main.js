@@ -46,6 +46,8 @@ const userPictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
 
+const bigPicture = document.querySelector(`.big-picture`);
+
 const getRandomInt = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -131,49 +133,41 @@ renderPictures(picturesData);
 //
 
 const createSocialComment = function (commentObj) {
-  const comment = document.createElement(`li`);
-  comment.classList.add(`social__comment`);
-
-  const socialPicture = document.createElement(`img`);
-  socialPicture.classList.add(`social__picture`);
-  socialPicture.src = commentObj.avatar;
-  socialPicture.alt = commentObj.name;
-  socialPicture.width = SOCIAL_PICTURE_SIZE;
-  socialPicture.height = SOCIAL_PICTURE_SIZE;
-
-  const socialText = document.createElement(`p`);
-  socialText.classList.add(`social__text`);
-  socialText.textContent = commentObj.comment;
-
-  comment.append(socialPicture);
-  comment.append(socialText);
-  return comment;
+  return `
+  <li class="social__comment">
+  <img
+    class="social__picture"
+    src="${commentObj.avatar}"
+    alt="${commentObj.name}"
+    width="${SOCIAL_PICTURE_SIZE}" height="${SOCIAL_PICTURE_SIZE}">
+  <p class="social__text">${commentObj.comment}</p>
+  </li>
+  `;
 };
 
-const showBigPicture = function (picture) {
-  const bigPicture = document.querySelector(`.big-picture`);
-
+const fillBigPicture = function (picture) {
   bigPicture.querySelector(`.big-picture__img`).querySelector(`img`).src = picture.url;
   bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
   bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
   bigPicture.querySelector(`.social__caption`).textContent = picture.description;
-  const socialComments = bigPicture.querySelector(`.social__comments`);
 
-  const fragment = document.createDocumentFragment();
+  const comments = picture.comments.map((comment) => createSocialComment(comment));
+  bigPicture.querySelector(`.social__comments`).innerHTML = comments.join(``);
+};
 
-  for (let i = 0; i < picture.comments.length; i++) {
-    const comment = createSocialComment(picture.comments[i]);
-    fragment.append(comment);
-  }
-
-  socialComments.innerHTML = ``;
-  socialComments.append(fragment);
-
+const hideElements = function () {
   bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
   bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
+};
 
+const showBigPicture = function () {
   bigPicture.classList.remove(`hidden`);
   document.querySelector(`body`).classList.add(`modal-open`);
 };
 
-showBigPicture(picturesData[0]);
+
+fillBigPicture(picturesData[0]);
+
+hideElements();
+
+showBigPicture();
