@@ -48,6 +48,28 @@ const userPictureTemplate = document.querySelector(`#picture`)
 
 const bigPicture = document.querySelector(`.big-picture`);
 
+const uploadFileOpen = document.querySelector(`#upload-file`);
+const uploadFileForm = document.querySelector(`.img-upload__overlay`);
+const uploadFileClose = uploadFileForm.querySelector(`#upload-cancel`);
+
+const Key = {
+  ESC: `Escape`,
+  ENTER: `Enter`
+};
+
+const keyboard = {
+  doIfEscEvent(evt, callback) {
+    if (evt.key === Key.ESC) {
+      callback();
+    }
+  },
+  doIfEnterEvent(evt, callback) {
+    if (evt.key === Key.ENTER) {
+      callback();
+    }
+  }
+};
+
 const getRandomInt = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -171,3 +193,6 @@ fillBigPicture(picturesData[0]);
 hideElements();
 
 showBigPicture();
+
+// Загрузка изображения и показ формы редактирования:
+
