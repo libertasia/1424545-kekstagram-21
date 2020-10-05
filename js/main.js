@@ -42,15 +42,28 @@ const PICTURES_COUNT = 25;
 
 const SOCIAL_PICTURE_SIZE = 35;
 
+const PICTURE_SCALE_STEP = 25;
+
+const pageBody = document.querySelector(`body`);
+
 const userPictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
 
 const bigPicture = document.querySelector(`.big-picture`);
 
-const uploadFileOpen = document.querySelector(`#upload-file`);
+const uploadFileInput = document.querySelector(`#upload-file`);
 const uploadFileForm = document.querySelector(`.img-upload__overlay`);
-const uploadFileClose = uploadFileForm.querySelector(`#upload-cancel`);
+const uploadFileCloseBtn = uploadFileForm.querySelector(`#upload-cancel`);
+
+const increaseImgSizeBtn = uploadFileForm.querySelector(`.scale__control--bigger`);
+const decreaseImgSizeBtn = uploadFileForm.querySelector(`.scale__control--smaller`);
+const imgSizeValueInput = uploadFileForm.querySelector(`.scale__control--value`);
+const imgUploadPreview = uploadFileForm.querySelector(`.img-upload__preview img`);
+
+const effectLevelPin = uploadFileForm.querySelector(`.effect-level__pin`);
+const effectLevelValueInput = uploadFileForm.querySelector(`.effect-level__value`);
+const effectLevelSlider = uploadFileForm.querySelector(`.img-upload__effect-level`);
 
 const Key = {
   ESC: `Escape`,
@@ -184,7 +197,7 @@ const hideElements = function () {
 
 const showBigPicture = function () {
   bigPicture.classList.remove(`hidden`);
-  document.querySelector(`body`).classList.add(`modal-open`);
+  pageBody.classList.add(`modal-open`);
 };
 
 
@@ -192,7 +205,129 @@ fillBigPicture(picturesData[0]);
 
 hideElements();
 
-showBigPicture();
+// showBigPicture();
 
 // Загрузка изображения и показ формы редактирования:
 
+
+const onPopupEscPress = function (evt) {
+  // evt.preventDefault();
+  keyboard.doIfEscEvent(evt, closePopup);
+};
+
+const resetImgParams = function () {
+  imgSizeValueInput.value = `100%`;
+  changePictureSize();
+  imgUploadPreview.classList.remove(...imgUploadPreview.classList);
+  effectLevelSlider.classList.add(`hidden`);
+};
+
+const openPopup = function () {
+  uploadFileForm.classList.remove(`hidden`);
+  pageBody.classList.add(`modal-open`);
+
+  resetImgParams();
+
+  document.addEventListener(`keydown`, onPopupEscPress);
+};
+
+const closePopup = function () {
+  uploadFileForm.classList.add(`hidden`);
+  uploadFileInput.value = ``;
+  pageBody.classList.remove(`modal-open`);
+
+  document.removeEventListener(`keydown`, onPopupEscPress);
+};
+
+uploadFileInput.addEventListener(`change`, function () {
+  openPopup();
+});
+
+uploadFileCloseBtn.addEventListener(`click`, function () {
+  closePopup();
+});
+
+uploadFileCloseBtn.addEventListener(`keydown`, function (evt) {
+  keyboard.doIfEnterEvent(evt, closePopup);
+});
+
+// Редактирование размера изображения(Масштаб):
+
+const changePictureSize = function () {
+  const currentValue = parseInt(imgSizeValueInput.value, 10);
+  imgUploadPreview.style.transform = `scale(${currentValue / 100})`;
+};
+
+const increaseImgSizeValueInput = function () {
+  const currentValue = parseInt(imgSizeValueInput.value, 10);
+  let newValue = currentValue + PICTURE_SCALE_STEP;
+  if (newValue > 100) {
+    newValue = 100;
+  }
+  imgSizeValueInput.value = `${newValue}%`;
+};
+
+const decreaseImgSizeValueInput = function () {
+  const currentValue = parseInt(imgSizeValueInput.value, 10);
+  let newValue = currentValue - PICTURE_SCALE_STEP;
+  if (newValue < 25) {
+    newValue = 25;
+  }
+  imgSizeValueInput.value = `${newValue}%`;
+};
+
+increaseImgSizeBtn.addEventListener(`click`, function () {
+  increaseImgSizeValueInput();
+  changePictureSize();
+});
+
+decreaseImgSizeBtn.addEventListener(`click`, function () {
+  decreaseImgSizeValueInput();
+  changePictureSize();
+});
+
+// Наложение эффекта на изображение:
+
+const filterChangeHandler = function (evt) {
+  if (evt.target && evt.target.matches(`input[type="radio"]`)) {
+    imgUploadPreview.classList.remove(...imgUploadPreview.classList);
+    imgUploadPreview.style.filter = ``;
+    effectLevelValueInput.value = 100;
+    imgUploadPreview.classList.add(`effects__preview--${evt.target.value}`);
+
+    if (evt.target.value === `none`) {
+      effectLevelSlider.classList.add(`hidden`);
+    } else {
+      effectLevelSlider.classList.remove(`hidden`);
+    }
+  }
+};
+
+const changeEffectLevel = function (levelValue) {
+  if (imgUploadPreview.classList.contains(`effects__preview--none`)) {
+    imgUploadPreview.style.filter = ``;
+  } else if (imgUploadPreview.classList.contains(`effects__preview--chrome`)) {
+    imgUploadPreview.style.filter = `grayscale(${levelValue / 100})`;
+  } else if (imgUploadPreview.classList.contains(`effects__preview--sepia`)) {
+    imgUploadPreview.style.filter = `sepia(${levelValue / 100})`;
+  } else if (imgUploadPreview.classList.contains(`effects__preview--marvin`)) {
+    imgUploadPreview.style.filter = `invert(${levelValue}%)`;
+  } else if (imgUploadPreview.classList.contains(`effects__preview--phobos`)) {
+    let convertedValue = Math.floor(levelValue / 25);
+    if (convertedValue > 3) {
+      convertedValue = 3;
+    }
+    imgUploadPreview.style.filter = `blur(${convertedValue}px)`;
+  } else if (imgUploadPreview.classList.contains(`effects__preview--heat`)) {
+    imgUploadPreview.style.filter = `brightness(${Math.ceil(3 * levelValue / 100)})`;
+  }
+};
+
+uploadFileForm.addEventListener(`change`, filterChangeHandler);
+
+effectLevelPin.addEventListener(`mouseup`, function (evt) {
+  let levelValue = Math.round(evt.target.offsetLeft / evt.target.parentElement.offsetWidth * 100);
+  effectLevelValueInput.value = levelValue;
+
+  changeEffectLevel(levelValue);
+});
