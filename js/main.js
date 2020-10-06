@@ -38,11 +38,23 @@ const COMMENTS = [
   `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`
 ];
 
+const MIN_LIKES_COUNT = 15;
+
+const MAX_LIKES_COUNT = 200;
+
 const PICTURES_COUNT = 25;
 
 const SOCIAL_PICTURE_SIZE = 35;
 
 const PICTURE_SCALE_STEP = 25;
+
+// const MIN_HASHTAG_LENGTH = 2;
+
+// const MAX_HASHTAG_LENGTH = 20;
+
+const MAX_HASHTAGS_COUNT = 5;
+
+const HASHTAG_VALIDITY_REGEX = RegExp(`^#[a-zA-Z0-9а-яА-ЯёЁ]{1,19}$`);
 
 const pageBody = document.querySelector(`body`);
 
@@ -65,6 +77,8 @@ const effectLevelPin = uploadFileForm.querySelector(`.effect-level__pin`);
 const effectLevelValueInput = uploadFileForm.querySelector(`.effect-level__value`);
 const effectLevelSlider = uploadFileForm.querySelector(`.img-upload__effect-level`);
 
+const hashtagsInput = uploadFileForm.querySelector(`.text__hashtags`);
+
 const Key = {
   ESC: `Escape`,
   ENTER: `Enter`
@@ -81,6 +95,19 @@ const keyboard = {
       callback();
     }
   }
+};
+
+const InvalidMessage = {
+  HASHTAG_INVALID: `
+  хэш-тег начинается с символа # (решётка);
+  строка после решётки должна состоять из букв и чисел;
+  хеш-тег не может состоять только из одной решётки;
+  максимальная длина одного хэш-тега 20 символов, включая решётку;
+  хэш-теги разделяются пробелами;`,
+  HASHTAG_DUPLICATE: `хэш-теги нечувствительны к регистру, один и тот же хэш-тег не может быть использован дважды;`,
+  TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`
+  // HASHTAG_TOO_SHORT: `Хэш-тег должен состоять минимум из 1-го символа после решётки`,
+  // HASHTAG_TOO_LONG: `Хэш-тег не должен превышать 20-ти символов, включая решётку`,
 };
 
 const getRandomInt = function (min, max) {
@@ -132,7 +159,7 @@ const generatePictures = function () {
     pictures.push({
       url,
       description: ``,
-      likes: getRandomInt(15, 200),
+      likes: getRandomInt(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
       comments: generateComments(getRandomInt(1, 6))
     });
   }
@@ -211,8 +238,10 @@ hideElements();
 
 
 const onPopupEscPress = function (evt) {
-  // evt.preventDefault();
-  keyboard.doIfEscEvent(evt, closePopup);
+  if (document.activeElement !== hashtagsInput) {
+    // evt.preventDefault();
+    keyboard.doIfEscEvent(evt, closePopup);
+  }
 };
 
 const resetImgParams = function () {
@@ -319,7 +348,7 @@ const changeEffectLevel = function (levelValue) {
     }
     imgUploadPreview.style.filter = `blur(${convertedValue}px)`;
   } else if (imgUploadPreview.classList.contains(`effects__preview--heat`)) {
-    imgUploadPreview.style.filter = `brightness(${Math.ceil(3 * levelValue / 100)})`;
+    imgUploadPreview.style.filter = `brightness(${1 + 0.02 * levelValue})`;
   }
 };
 
@@ -330,4 +359,39 @@ effectLevelPin.addEventListener(`mouseup`, function (evt) {
   effectLevelValueInput.value = levelValue;
 
   changeEffectLevel(levelValue);
+});
+
+// Валидация хеш-тегов:
+
+const hasInvalidHashtag = function (arr) {
+  for (let i = 0; i < arr.length; i++) {
+    if (!HASHTAG_VALIDITY_REGEX.test(arr[i])) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const hasDuplicateHashtag = function (arr) {
+  for (let i = 0; i < arr.length - 1; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i] === arr[j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+hashtagsInput.addEventListener(`input`, function (evt) {
+  const hashtagsArray = evt.target.value.toLowerCase().split(` `);
+  if (hashtagsArray.length > MAX_HASHTAGS_COUNT) {
+    hashtagsInput.setCustomValidity(InvalidMessage.TOO_MANY_HASHTAGS);
+  } else if (hasInvalidHashtag(hashtagsArray)) {
+    hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_INVALID);
+  } else if (hasDuplicateHashtag(hashtagsArray)) {
+    hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_DUPLICATE);
+  } else {
+    hashtagsInput.setCustomValidity(``);
+  }
 });
