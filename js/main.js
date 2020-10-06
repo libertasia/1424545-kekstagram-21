@@ -221,17 +221,17 @@ const hideElements = function () {
   bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
   bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
 };
-
-const showBigPicture = function () {
-  bigPicture.classList.remove(`hidden`);
-  pageBody.classList.add(`modal-open`);
-};
+// Временно закомментила, чтобы не загораживала кнопку загрузки изображения
+// const showBigPicture = function () {
+//   bigPicture.classList.remove(`hidden`);
+//   pageBody.classList.add(`modal-open`);
+// };
 
 
 fillBigPicture(picturesData[0]);
 
 hideElements();
-
+// Временно закомментила, чтобы не загораживала кнопку загрузки изображения
 // showBigPicture();
 
 // Загрузка изображения и показ формы редактирования:
