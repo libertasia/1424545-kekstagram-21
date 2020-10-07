@@ -58,6 +58,8 @@ const MAX_HASHTAGS_COUNT = 5;
 
 const HASHTAG_VALIDITY_REGEX = RegExp(`^#[a-zA-Z0-9а-яА-ЯёЁ]{1,19}$`);
 
+const MAX_COMMENT_INPUT_LENGTH = 140;
+
 const pageBody = document.querySelector(`body`);
 
 const userPictureTemplate = document.querySelector(`#picture`)
@@ -65,6 +67,7 @@ const userPictureTemplate = document.querySelector(`#picture`)
   .querySelector(`.picture`);
 
 const bigPicture = document.querySelector(`.big-picture`);
+const bigPictureCloseBtn = bigPicture.querySelector(`.big-picture__cancel`);
 
 const uploadFileInput = document.querySelector(`#upload-file`);
 const uploadFileForm = document.querySelector(`.img-upload__overlay`);
@@ -80,6 +83,7 @@ const effectLevelValueInput = uploadFileForm.querySelector(`.effect-level__value
 const effectLevelSlider = uploadFileForm.querySelector(`.img-upload__effect-level`);
 
 const hashtagsInput = uploadFileForm.querySelector(`.text__hashtags`);
+const commentInput = uploadFileForm.querySelector(`.text__description`);
 
 let activeFilter = null;
 
@@ -109,7 +113,8 @@ const InvalidMessage = {
   максимальная длина одного хэш-тега 20 символов, включая решётку;
   хэш-теги разделяются пробелами;`,
   HASHTAG_DUPLICATE: `хэш-теги нечувствительны к регистру, один и тот же хэш-тег не может быть использован дважды;`,
-  TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`
+  TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`,
+  COMMENT_TOO_LONG: `длина комментария не может составлять больше 140 символов;`
 };
 
 const effect = {
@@ -235,7 +240,7 @@ const picturesData = generatePictures();
 renderPictures(picturesData);
 
 
-//
+// Показ/закрытие фотографии в полноразмерном режиме:
 
 const createSocialComment = function (commentObj) {
   return `
@@ -264,24 +269,45 @@ const hideElements = function () {
   bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
   bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
 };
-// Временно закомментила, чтобы не загораживала кнопку загрузки изображения
-// const showBigPicture = function () {
-//   bigPicture.classList.remove(`hidden`);
-//   pageBody.classList.add(`modal-open`);
-// };
 
+const onBigPictureEscPress = function (evt) {
+  // evt.preventDefault();
+  keyboard.doIfEscEvent(evt, closeBigPicture);
+};
+
+const showBigPicture = function () {
+  bigPicture.classList.remove(`hidden`);
+  pageBody.classList.add(`modal-open`);
+
+  document.addEventListener(`keydown`, onBigPictureEscPress);
+};
+
+const closeBigPicture = function () {
+  bigPicture.classList.add(`hidden`);
+  pageBody.classList.remove(`modal-open`);
+
+  document.removeEventListener(`keydown`, onBigPictureEscPress);
+};
+
+bigPictureCloseBtn.addEventListener(`click`, function () {
+  closeBigPicture();
+});
+
+bigPictureCloseBtn.addEventListener(`keydown`, function (evt) {
+  keyboard.doIfEnterEvent(evt, closeBigPicture);
+});
 
 fillBigPicture(picturesData[0]);
 
 hideElements();
-// Временно закомментила, чтобы не загораживала кнопку загрузки изображения
-// showBigPicture();
+
+showBigPicture();
 
 // Загрузка изображения и показ формы редактирования:
 
 
 const onPopupEscPress = function (evt) {
-  if (document.activeElement !== hashtagsInput) {
+  if (document.activeElement !== hashtagsInput && document.activeElement !== commentInput) {
     keyboard.doIfEscEvent(evt, closePopup);
   }
 };
@@ -410,4 +436,26 @@ hashtagsInput.addEventListener(`input`, function (evt) {
   } else {
     hashtagsInput.setCustomValidity(``);
   }
+});
+
+// Валидация комментария:
+
+commentInput.addEventListener(`invalid`, function () {
+  if (commentInput.validity.tooLong) {
+    commentInput.setCustomValidity(InvalidMessage.COMMENT_TOO_LONG);
+  } else {
+    commentInput.setCustomValidity(``);
+  }
+});
+
+commentInput.addEventListener(`input`, function (evt) {
+  const valueLength = evt.target.value.length;
+
+  if (valueLength > MAX_COMMENT_INPUT_LENGTH) {
+    commentInput.setCustomValidity(`Удалите лишние ` + (valueLength - MAX_COMMENT_INPUT_LENGTH) + ` симв.`);
+  } else {
+    commentInput.setCustomValidity(``);
+  }
+
+  commentInput.reportValidity();
 });
