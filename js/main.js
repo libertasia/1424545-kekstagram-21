@@ -48,9 +48,11 @@ const SOCIAL_PICTURE_SIZE = 35;
 
 const PICTURE_SCALE_STEP = 25;
 
-// const MIN_HASHTAG_LENGTH = 2;
+const MIN_PICTURE_SIZE = 25;
 
-// const MAX_HASHTAG_LENGTH = 20;
+const MAX_PICTURE_SIZE = 100;
+
+const MAX_EFFECT_LEVEL_VALUE = 100;
 
 const MAX_HASHTAGS_COUNT = 5;
 
@@ -79,6 +81,8 @@ const effectLevelSlider = uploadFileForm.querySelector(`.img-upload__effect-leve
 
 const hashtagsInput = uploadFileForm.querySelector(`.text__hashtags`);
 
+let activeFilter = null;
+
 const Key = {
   ESC: `Escape`,
   ENTER: `Enter`
@@ -106,8 +110,47 @@ const InvalidMessage = {
   хэш-теги разделяются пробелами;`,
   HASHTAG_DUPLICATE: `хэш-теги нечувствительны к регистру, один и тот же хэш-тег не может быть использован дважды;`,
   TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`
-  // HASHTAG_TOO_SHORT: `Хэш-тег должен состоять минимум из 1-го символа после решётки`,
-  // HASHTAG_TOO_LONG: `Хэш-тег не должен превышать 20-ти символов, включая решётку`,
+};
+
+const effect = {
+  none: {
+    className: `effects__preview--none`
+  },
+  chrome: {
+    className: `effects__preview--chrome`,
+    type: `grayscale`,
+    min: 0,
+    max: 1,
+    units: ``
+  },
+  sepia: {
+    className: `effects__preview--sepia`,
+    type: `sepia`,
+    min: 0,
+    max: 1,
+    units: ``
+  },
+  marvin: {
+    className: `effects__preview--marvin`,
+    type: `invert`,
+    min: 0,
+    max: 100,
+    units: `%`
+  },
+  phobos: {
+    className: `effects__preview--phobos`,
+    type: `blur`,
+    min: 0,
+    max: 3,
+    units: `px`
+  },
+  heat: {
+    className: `effects__preview--heat`,
+    type: `brightness`,
+    min: 1,
+    max: 3,
+    units: ``
+  }
 };
 
 const getRandomInt = function (min, max) {
@@ -239,7 +282,6 @@ hideElements();
 
 const onPopupEscPress = function (evt) {
   if (document.activeElement !== hashtagsInput) {
-    // evt.preventDefault();
     keyboard.doIfEscEvent(evt, closePopup);
   }
 };
@@ -284,14 +326,14 @@ uploadFileCloseBtn.addEventListener(`keydown`, function (evt) {
 
 const changePictureSize = function () {
   const currentValue = parseInt(imgSizeValueInput.value, 10);
-  imgUploadPreview.style.transform = `scale(${currentValue / 100})`;
+  imgUploadPreview.style.transform = `scale(${currentValue / MAX_PICTURE_SIZE})`;
 };
 
 const increaseImgSizeValueInput = function () {
   const currentValue = parseInt(imgSizeValueInput.value, 10);
   let newValue = currentValue + PICTURE_SCALE_STEP;
-  if (newValue > 100) {
-    newValue = 100;
+  if (newValue > MAX_PICTURE_SIZE) {
+    newValue = MAX_PICTURE_SIZE;
   }
   imgSizeValueInput.value = `${newValue}%`;
 };
@@ -299,8 +341,8 @@ const increaseImgSizeValueInput = function () {
 const decreaseImgSizeValueInput = function () {
   const currentValue = parseInt(imgSizeValueInput.value, 10);
   let newValue = currentValue - PICTURE_SCALE_STEP;
-  if (newValue < 25) {
-    newValue = 25;
+  if (newValue < MIN_PICTURE_SIZE) {
+    newValue = MIN_PICTURE_SIZE;
   }
   imgSizeValueInput.value = `${newValue}%`;
 };
@@ -317,15 +359,16 @@ decreaseImgSizeBtn.addEventListener(`click`, function () {
 
 // Наложение эффекта на изображение:
 
-const filterChangeHandler = function (evt) {
-  if (evt.target && evt.target.matches(`input[type="radio"]`)) {
-    imgUploadPreview.classList.remove(...imgUploadPreview.classList);
+const onUploadFileFormChange = function (evt) {
+  if (evt.target.matches(`input[type="radio"]`)) {
     imgUploadPreview.style.filter = ``;
-    effectLevelValueInput.value = 100;
-    imgUploadPreview.classList.add(`effects__preview--${evt.target.value}`);
+    effectLevelValueInput.value = MAX_EFFECT_LEVEL_VALUE;
+    imgUploadPreview.className = `effects__preview--${evt.target.value}`;
+    activeFilter = effect[evt.target.value];
 
     if (evt.target.value === `none`) {
       effectLevelSlider.classList.add(`hidden`);
+      activeFilter = null;
     } else {
       effectLevelSlider.classList.remove(`hidden`);
     }
@@ -333,26 +376,18 @@ const filterChangeHandler = function (evt) {
 };
 
 const changeEffectLevel = function (levelValue) {
-  if (imgUploadPreview.classList.contains(`effects__preview--none`)) {
+  if (!activeFilter) {
     imgUploadPreview.style.filter = ``;
-  } else if (imgUploadPreview.classList.contains(`effects__preview--chrome`)) {
-    imgUploadPreview.style.filter = `grayscale(${levelValue / 100})`;
-  } else if (imgUploadPreview.classList.contains(`effects__preview--sepia`)) {
-    imgUploadPreview.style.filter = `sepia(${levelValue / 100})`;
-  } else if (imgUploadPreview.classList.contains(`effects__preview--marvin`)) {
-    imgUploadPreview.style.filter = `invert(${levelValue}%)`;
-  } else if (imgUploadPreview.classList.contains(`effects__preview--phobos`)) {
-    let convertedValue = Math.floor(levelValue / 25);
-    if (convertedValue > 3) {
-      convertedValue = 3;
-    }
-    imgUploadPreview.style.filter = `blur(${convertedValue}px)`;
-  } else if (imgUploadPreview.classList.contains(`effects__preview--heat`)) {
-    imgUploadPreview.style.filter = `brightness(${1 + 0.02 * levelValue})`;
+    return;
   }
+  let value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / 100;
+  if (activeFilter.units === `px`) {
+    value = Math.floor(value);
+  }
+  imgUploadPreview.style.filter = `${activeFilter.type}(${value}${activeFilter.units})`;
 };
 
-uploadFileForm.addEventListener(`change`, filterChangeHandler);
+uploadFileForm.addEventListener(`change`, onUploadFileFormChange);
 
 effectLevelPin.addEventListener(`mouseup`, function (evt) {
   let levelValue = Math.round(evt.target.offsetLeft / evt.target.parentElement.offsetWidth * 100);
@@ -363,33 +398,21 @@ effectLevelPin.addEventListener(`mouseup`, function (evt) {
 
 // Валидация хеш-тегов:
 
-const hasInvalidHashtag = function (arr) {
-  for (let i = 0; i < arr.length; i++) {
-    if (!HASHTAG_VALIDITY_REGEX.test(arr[i])) {
-      return true;
-    }
-  }
-  return false;
+const isInvalidHashtagInArray = function (arr) {
+  return !arr.every((item) => ((item) === `` || HASHTAG_VALIDITY_REGEX.test(item)));
 };
 
-const hasDuplicateHashtag = function (arr) {
-  for (let i = 0; i < arr.length - 1; i++) {
-    for (let j = i + 1; j < arr.length; j++) {
-      if (arr[i] === arr[j]) {
-        return true;
-      }
-    }
-  }
-  return false;
+const isDuplicateHashtagInArray = function (arr) {
+  return !arr.every((item, index, array) => (array.indexOf(item) === index));
 };
 
 hashtagsInput.addEventListener(`input`, function (evt) {
   const hashtagsArray = evt.target.value.toLowerCase().split(` `);
   if (hashtagsArray.length > MAX_HASHTAGS_COUNT) {
     hashtagsInput.setCustomValidity(InvalidMessage.TOO_MANY_HASHTAGS);
-  } else if (hasInvalidHashtag(hashtagsArray)) {
+  } else if (isInvalidHashtagInArray(hashtagsArray)) {
     hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_INVALID);
-  } else if (hasDuplicateHashtag(hashtagsArray)) {
+  } else if (isDuplicateHashtagInArray(hashtagsArray)) {
     hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_DUPLICATE);
   } else {
     hashtagsInput.setCustomValidity(``);
