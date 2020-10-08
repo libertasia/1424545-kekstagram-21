@@ -61,6 +61,7 @@ const HASHTAG_VALIDITY_REGEX = RegExp(`^#[a-zA-Z0-9а-яА-ЯёЁ]{1,19}$`);
 const MAX_COMMENT_INPUT_LENGTH = 140;
 
 const pageBody = document.querySelector(`body`);
+const picturesSection = document.querySelector(`.pictures`);
 
 const userPictureTemplate = document.querySelector(`#picture`)
   .content
@@ -218,6 +219,7 @@ const createPictureElement = function (picture) {
   const pictureElement = userPictureTemplate.cloneNode(true);
 
   pictureElement.querySelector(`.picture__img`).src = picture.url;
+  pictureElement.querySelector(`.picture__img`).pictureData = picture;
   pictureElement.querySelector(`.picture__likes`).textContent = picture.likes;
   pictureElement.querySelector(`.picture__comments`).textContent = picture.comments.length;
 
@@ -271,7 +273,6 @@ const hideElements = function () {
 };
 
 const onBigPictureEscPress = function (evt) {
-  // evt.preventDefault();
   keyboard.doIfEscEvent(evt, closeBigPicture);
 };
 
@@ -297,11 +298,21 @@ bigPictureCloseBtn.addEventListener(`keydown`, function (evt) {
   keyboard.doIfEnterEvent(evt, closeBigPicture);
 });
 
-fillBigPicture(picturesData[0]);
+picturesSection.addEventListener(`click`, function (evt) {
+  if (evt.target.matches(`img.picture__img`)) {
+    fillBigPicture(evt.target.pictureData);
+    hideElements();
+    showBigPicture();
+  }
+});
 
-hideElements();
-
-showBigPicture();
+picturesSection.addEventListener(`keydown`, function (evt) {
+  if (evt.target.matches(`a.picture`)) {
+    fillBigPicture(evt.target.querySelector(`.picture__img`).pictureData);
+    hideElements();
+    keyboard.doIfEnterEvent(evt, showBigPicture);
+  }
+});
 
 // Загрузка изображения и показ формы редактирования:
 
