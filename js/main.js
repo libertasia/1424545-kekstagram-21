@@ -380,10 +380,8 @@ const changeEffectLevel = function (levelValue) {
     imgUploadPreview.style.filter = ``;
     return;
   }
-  let value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / 100;
-  if (activeFilter.units === `px`) {
-    value = Math.floor(value);
-  }
+  const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / 100;
+
   imgUploadPreview.style.filter = `${activeFilter.type}(${value}${activeFilter.units})`;
 };
 
