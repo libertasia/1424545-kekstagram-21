@@ -38,15 +38,120 @@ const COMMENTS = [
   `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`
 ];
 
+const MIN_LIKES_COUNT = 15;
+
+const MAX_LIKES_COUNT = 200;
+
 const PICTURES_COUNT = 25;
 
 const SOCIAL_PICTURE_SIZE = 35;
+
+const PICTURE_SCALE_STEP = 25;
+
+const MIN_PICTURE_SIZE = 25;
+
+const MAX_PICTURE_SIZE = 100;
+
+const MAX_EFFECT_LEVEL_VALUE = 100;
+
+const MAX_HASHTAGS_COUNT = 5;
+
+const HASHTAG_VALIDITY_REGEX = RegExp(`^#[a-zA-Z0-9а-яА-ЯёЁ]{1,19}$`);
+
+const pageBody = document.querySelector(`body`);
 
 const userPictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
 
 const bigPicture = document.querySelector(`.big-picture`);
+
+const uploadFileInput = document.querySelector(`#upload-file`);
+const uploadFileForm = document.querySelector(`.img-upload__overlay`);
+const uploadFileCloseBtn = uploadFileForm.querySelector(`#upload-cancel`);
+
+const increaseImgSizeBtn = uploadFileForm.querySelector(`.scale__control--bigger`);
+const decreaseImgSizeBtn = uploadFileForm.querySelector(`.scale__control--smaller`);
+const imgSizeValueInput = uploadFileForm.querySelector(`.scale__control--value`);
+const imgUploadPreview = uploadFileForm.querySelector(`.img-upload__preview img`);
+
+const effectLevelPin = uploadFileForm.querySelector(`.effect-level__pin`);
+const effectLevelValueInput = uploadFileForm.querySelector(`.effect-level__value`);
+const effectLevelSlider = uploadFileForm.querySelector(`.img-upload__effect-level`);
+
+const hashtagsInput = uploadFileForm.querySelector(`.text__hashtags`);
+
+let activeFilter = null;
+
+const Key = {
+  ESC: `Escape`,
+  ENTER: `Enter`
+};
+
+const keyboard = {
+  doIfEscEvent(evt, callback) {
+    if (evt.key === Key.ESC) {
+      callback();
+    }
+  },
+  doIfEnterEvent(evt, callback) {
+    if (evt.key === Key.ENTER) {
+      callback();
+    }
+  }
+};
+
+const InvalidMessage = {
+  HASHTAG_INVALID: `
+  хэш-тег начинается с символа # (решётка);
+  строка после решётки должна состоять из букв и чисел;
+  хеш-тег не может состоять только из одной решётки;
+  максимальная длина одного хэш-тега 20 символов, включая решётку;
+  хэш-теги разделяются пробелами;`,
+  HASHTAG_DUPLICATE: `хэш-теги нечувствительны к регистру, один и тот же хэш-тег не может быть использован дважды;`,
+  TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`
+};
+
+const effect = {
+  none: {
+    className: `effects__preview--none`
+  },
+  chrome: {
+    className: `effects__preview--chrome`,
+    type: `grayscale`,
+    min: 0,
+    max: 1,
+    units: ``
+  },
+  sepia: {
+    className: `effects__preview--sepia`,
+    type: `sepia`,
+    min: 0,
+    max: 1,
+    units: ``
+  },
+  marvin: {
+    className: `effects__preview--marvin`,
+    type: `invert`,
+    min: 0,
+    max: 100,
+    units: `%`
+  },
+  phobos: {
+    className: `effects__preview--phobos`,
+    type: `blur`,
+    min: 0,
+    max: 3,
+    units: `px`
+  },
+  heat: {
+    className: `effects__preview--heat`,
+    type: `brightness`,
+    min: 1,
+    max: 3,
+    units: ``
+  }
+};
 
 const getRandomInt = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -97,7 +202,7 @@ const generatePictures = function () {
     pictures.push({
       url,
       description: ``,
-      likes: getRandomInt(15, 200),
+      likes: getRandomInt(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
       comments: generateComments(getRandomInt(1, 6))
     });
   }
@@ -159,15 +264,150 @@ const hideElements = function () {
   bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
   bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
 };
-
-const showBigPicture = function () {
-  bigPicture.classList.remove(`hidden`);
-  document.querySelector(`body`).classList.add(`modal-open`);
-};
+// Временно закомментила, чтобы не загораживала кнопку загрузки изображения
+// const showBigPicture = function () {
+//   bigPicture.classList.remove(`hidden`);
+//   pageBody.classList.add(`modal-open`);
+// };
 
 
 fillBigPicture(picturesData[0]);
 
 hideElements();
+// Временно закомментила, чтобы не загораживала кнопку загрузки изображения
+// showBigPicture();
 
-showBigPicture();
+// Загрузка изображения и показ формы редактирования:
+
+
+const onPopupEscPress = function (evt) {
+  if (document.activeElement !== hashtagsInput) {
+    keyboard.doIfEscEvent(evt, closePopup);
+  }
+};
+
+const resetImgParams = function () {
+  imgSizeValueInput.value = `100%`;
+  changePictureSize();
+  imgUploadPreview.classList.remove(...imgUploadPreview.classList);
+  effectLevelSlider.classList.add(`hidden`);
+};
+
+const openPopup = function () {
+  uploadFileForm.classList.remove(`hidden`);
+  pageBody.classList.add(`modal-open`);
+
+  resetImgParams();
+
+  document.addEventListener(`keydown`, onPopupEscPress);
+};
+
+const closePopup = function () {
+  uploadFileForm.classList.add(`hidden`);
+  uploadFileInput.value = ``;
+  pageBody.classList.remove(`modal-open`);
+
+  document.removeEventListener(`keydown`, onPopupEscPress);
+};
+
+uploadFileInput.addEventListener(`change`, function () {
+  openPopup();
+});
+
+uploadFileCloseBtn.addEventListener(`click`, function () {
+  closePopup();
+});
+
+uploadFileCloseBtn.addEventListener(`keydown`, function (evt) {
+  keyboard.doIfEnterEvent(evt, closePopup);
+});
+
+// Редактирование размера изображения(Масштаб):
+
+const changePictureSize = function () {
+  const currentValue = parseInt(imgSizeValueInput.value, 10);
+  imgUploadPreview.style.transform = `scale(${currentValue / MAX_PICTURE_SIZE})`;
+};
+
+const increaseImgSizeValueInput = function () {
+  const currentValue = parseInt(imgSizeValueInput.value, 10);
+  let newValue = currentValue + PICTURE_SCALE_STEP;
+  if (newValue > MAX_PICTURE_SIZE) {
+    newValue = MAX_PICTURE_SIZE;
+  }
+  imgSizeValueInput.value = `${newValue}%`;
+};
+
+const decreaseImgSizeValueInput = function () {
+  const currentValue = parseInt(imgSizeValueInput.value, 10);
+  let newValue = currentValue - PICTURE_SCALE_STEP;
+  if (newValue < MIN_PICTURE_SIZE) {
+    newValue = MIN_PICTURE_SIZE;
+  }
+  imgSizeValueInput.value = `${newValue}%`;
+};
+
+increaseImgSizeBtn.addEventListener(`click`, function () {
+  increaseImgSizeValueInput();
+  changePictureSize();
+});
+
+decreaseImgSizeBtn.addEventListener(`click`, function () {
+  decreaseImgSizeValueInput();
+  changePictureSize();
+});
+
+// Наложение эффекта на изображение:
+
+const onUploadFileFormChange = function (evt) {
+  if (evt.target.matches(`input[type="radio"]`)) {
+    imgUploadPreview.style.filter = ``;
+    effectLevelValueInput.value = MAX_EFFECT_LEVEL_VALUE;
+    imgUploadPreview.className = `effects__preview--${evt.target.value}`;
+    activeFilter = effect[evt.target.value];
+
+    if (evt.target.value === `none`) {
+      effectLevelSlider.classList.add(`hidden`);
+      activeFilter = null;
+    } else {
+      effectLevelSlider.classList.remove(`hidden`);
+    }
+  }
+};
+
+const changeEffectLevel = function (levelValue) {
+  if (!activeFilter) {
+    imgUploadPreview.style.filter = ``;
+    return;
+  }
+  const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / 100;
+
+  imgUploadPreview.style.filter = `${activeFilter.type}(${value}${activeFilter.units})`;
+};
+
+uploadFileForm.addEventListener(`change`, onUploadFileFormChange);
+
+effectLevelPin.addEventListener(`mouseup`, function (evt) {
+  const levelValue = Math.round(evt.target.offsetLeft / evt.target.parentElement.offsetWidth * 100);
+  effectLevelValueInput.value = levelValue;
+
+  changeEffectLevel(levelValue);
+});
+
+// Валидация хеш-тегов:
+
+hashtagsInput.addEventListener(`input`, function (evt) {
+  const hashtagsArray = evt.target.value.toLowerCase().split(` `);
+  const isInvalidHashtagInArray = !hashtagsArray.every((item) => ((item) === `` || HASHTAG_VALIDITY_REGEX.test(item)));
+  const isDuplicateHashtagInArray = !hashtagsArray.every((item, index, array) => (array.indexOf(item) === index));
+
+  if (hashtagsArray.length > MAX_HASHTAGS_COUNT) {
+    hashtagsInput.setCustomValidity(InvalidMessage.TOO_MANY_HASHTAGS);
+  } else if (isInvalidHashtagInArray) {
+    hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_INVALID);
+  } else if (isDuplicateHashtagInArray) {
+    hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_DUPLICATE);
+  } else {
+    hashtagsInput.setCustomValidity(``);
+  }
+});
