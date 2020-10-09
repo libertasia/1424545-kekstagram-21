@@ -390,7 +390,7 @@ const changeEffectLevel = function (levelValue) {
 uploadFileForm.addEventListener(`change`, onUploadFileFormChange);
 
 effectLevelPin.addEventListener(`mouseup`, function (evt) {
-  let levelValue = Math.round(evt.target.offsetLeft / evt.target.parentElement.offsetWidth * 100);
+  const levelValue = Math.round(evt.target.offsetLeft / evt.target.parentElement.offsetWidth * 100);
   effectLevelValueInput.value = levelValue;
 
   changeEffectLevel(levelValue);
@@ -398,21 +398,16 @@ effectLevelPin.addEventListener(`mouseup`, function (evt) {
 
 // Валидация хеш-тегов:
 
-const isInvalidHashtagInArray = function (arr) {
-  return !arr.every((item) => ((item) === `` || HASHTAG_VALIDITY_REGEX.test(item)));
-};
-
-const isDuplicateHashtagInArray = function (arr) {
-  return !arr.every((item, index, array) => (array.indexOf(item) === index));
-};
-
 hashtagsInput.addEventListener(`input`, function (evt) {
   const hashtagsArray = evt.target.value.toLowerCase().split(` `);
+  const isInvalidHashtagInArray = !hashtagsArray.every((item) => ((item) === `` || HASHTAG_VALIDITY_REGEX.test(item)));
+  const isDuplicateHashtagInArray = !hashtagsArray.every((item, index, array) => (array.indexOf(item) === index));
+
   if (hashtagsArray.length > MAX_HASHTAGS_COUNT) {
     hashtagsInput.setCustomValidity(InvalidMessage.TOO_MANY_HASHTAGS);
-  } else if (isInvalidHashtagInArray(hashtagsArray)) {
+  } else if (isInvalidHashtagInArray) {
     hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_INVALID);
-  } else if (isDuplicateHashtagInArray(hashtagsArray)) {
+  } else if (isDuplicateHashtagInArray) {
     hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_DUPLICATE);
   } else {
     hashtagsInput.setCustomValidity(``);
