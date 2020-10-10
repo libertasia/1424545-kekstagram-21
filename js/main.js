@@ -58,8 +58,6 @@ const MAX_HASHTAGS_COUNT = 5;
 
 const HASHTAG_VALIDITY_REGEX = RegExp(`^#[a-zA-Z0-9а-яА-ЯёЁ]{1,19}$`);
 
-const MAX_COMMENT_INPUT_LENGTH = 140;
-
 const pageBody = document.querySelector(`body`);
 const picturesSection = document.querySelector(`.pictures`);
 
@@ -114,8 +112,7 @@ const InvalidMessage = {
   максимальная длина одного хэш-тега 20 символов, включая решётку;
   хэш-теги разделяются пробелами;`,
   HASHTAG_DUPLICATE: `хэш-теги нечувствительны к регистру, один и тот же хэш-тег не может быть использован дважды;`,
-  TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`,
-  COMMENT_TOO_LONG: `длина комментария не может составлять больше 140 символов;`
+  TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`
 };
 
 const effect = {
@@ -442,26 +439,4 @@ hashtagsInput.addEventListener(`input`, function (evt) {
   } else {
     hashtagsInput.setCustomValidity(``);
   }
-});
-
-// Валидация комментария:
-
-commentInput.addEventListener(`invalid`, function () {
-  if (commentInput.validity.tooLong) {
-    commentInput.setCustomValidity(InvalidMessage.COMMENT_TOO_LONG);
-  } else {
-    commentInput.setCustomValidity(``);
-  }
-});
-
-commentInput.addEventListener(`input`, function (evt) {
-  const valueLength = evt.target.value.length;
-
-  if (valueLength > MAX_COMMENT_INPUT_LENGTH) {
-    commentInput.setCustomValidity(`Удалите лишние ` + (valueLength - MAX_COMMENT_INPUT_LENGTH) + ` симв.`);
-  } else {
-    commentInput.setCustomValidity(``);
-  }
-
-  commentInput.reportValidity();
 });
