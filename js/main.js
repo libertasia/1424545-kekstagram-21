@@ -203,6 +203,7 @@ const generatePictures = function () {
     while (isPropertyValueUsed(`url`, url, pictures));
 
     pictures.push({
+      id: `photo-${i}`,
       url,
       description: ``,
       likes: getRandomInt(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
@@ -215,6 +216,7 @@ const generatePictures = function () {
 const createPictureElement = function (picture) {
   const pictureElement = userPictureTemplate.cloneNode(true);
 
+  pictureElement.id = picture.id;
   pictureElement.querySelector(`.picture__img`).src = picture.url;
   pictureElement.querySelector(`.picture__likes`).textContent = picture.likes;
   pictureElement.querySelector(`.picture__comments`).textContent = picture.comments.length;
@@ -295,11 +297,9 @@ bigPictureCloseBtn.addEventListener(`keydown`, function (evt) {
 });
 
 picturesSection.addEventListener(`click`, function (evt) {
-  if (evt.target.matches(`img.picture__img`) ||
-      evt.target.matches(`a.picture`)) {
-    const pictureUrl = evt.target.matches(`img.picture__img`) ?
-      evt.target.getAttribute(`src`) : evt.target.querySelector(`.picture__img`).getAttribute(`src`);
-    const pictureData = picturesData.find((item) => item.url === pictureUrl);
+  if (evt.target.closest(`.picture`) !== null) {
+    const pictureId = evt.target.closest(`.picture`).id;
+    const pictureData = picturesData.find((item) => item.id === pictureId);
     fillBigPicture(pictureData);
     hideElements();
     showBigPicture();
