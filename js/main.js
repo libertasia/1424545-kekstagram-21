@@ -86,24 +86,6 @@ const commentInput = uploadFileForm.querySelector(`.text__description`);
 
 let activeFilter = null;
 
-const Key = {
-  ESC: `Escape`,
-  ENTER: `Enter`
-};
-
-const keyboard = {
-  doIfEscEvent(evt, callback) {
-    if (evt.key === Key.ESC) {
-      callback();
-    }
-  },
-  doIfEnterEvent(evt, callback) {
-    if (evt.key === Key.ENTER) {
-      callback();
-    }
-  }
-};
-
 const InvalidMessage = {
   HASHTAG_INVALID: `
   хэш-тег начинается с символа # (решётка);
@@ -154,10 +136,6 @@ const effect = {
     max: 3,
     units: ``
   }
-};
-
-const getRandomInt = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 const isPropertyValueUsed = function (propertyName, propertyValue, objArray) {
@@ -423,20 +401,4 @@ effectLevelPin.addEventListener(`mouseup`, function (evt) {
   changeEffectLevel(levelValue);
 });
 
-// Валидация хеш-тегов:
 
-hashtagsInput.addEventListener(`input`, function (evt) {
-  const hashtagsArray = evt.target.value.toLowerCase().split(` `);
-  const isInvalidHashtagInArray = !hashtagsArray.every((item) => ((item) === `` || HASHTAG_VALIDITY_REGEX.test(item)));
-  const isDuplicateHashtagInArray = !hashtagsArray.every((item, index, array) => (array.indexOf(item) === index));
-
-  if (hashtagsArray.length > MAX_HASHTAGS_COUNT) {
-    hashtagsInput.setCustomValidity(InvalidMessage.TOO_MANY_HASHTAGS);
-  } else if (isInvalidHashtagInArray) {
-    hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_INVALID);
-  } else if (isDuplicateHashtagInArray) {
-    hashtagsInput.setCustomValidity(InvalidMessage.HASHTAG_DUPLICATE);
-  } else {
-    hashtagsInput.setCustomValidity(``);
-  }
-});
