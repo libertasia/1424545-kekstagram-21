@@ -7,8 +7,10 @@
   const uploadFileForm = window.pictureSize.uploadFileForm;
   const imgUploadPreview = window.pictureSize.imgUploadPreview;
   const effectLevelSlider = window.form.effectLevelSlider;
+  const initSlider = window.slider.initSlider;
 
   const effectLevelPin = uploadFileForm.querySelector(`.effect-level__pin`);
+  const effectLevelDepth = uploadFileForm.querySelector(`.effect-level__depth`);
   const effectLevelValueInput = uploadFileForm.querySelector(`.effect-level__value`);
 
   let activeFilter = null;
@@ -57,7 +59,9 @@
   const onUploadFileFormChange = function (evt) {
     if (evt.target.matches(`input[type="radio"]`)) {
       imgUploadPreview.style.filter = ``;
-      effectLevelValueInput.value = MAX_EFFECT_LEVEL_VALUE;
+      effectLevelValueInput.setAttribute(`value`, MAX_EFFECT_LEVEL_VALUE);
+      effectLevelPin.style.left = `100%`;
+      effectLevelDepth.style.width = `100%`;
       imgUploadPreview.className = `effects__preview--${evt.target.value}`;
       activeFilter = effect[evt.target.value];
 
@@ -78,14 +82,10 @@
     const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / 100;
 
     imgUploadPreview.style.filter = `${activeFilter.type}(${value}${activeFilter.units})`;
+    effectLevelValueInput.setAttribute(`value`, levelValue);
   };
 
   uploadFileForm.addEventListener(`change`, onUploadFileFormChange);
 
-  effectLevelPin.addEventListener(`mouseup`, function (evt) {
-    const levelValue = Math.round(evt.target.offsetLeft / evt.target.parentElement.offsetWidth * 100);
-    effectLevelValueInput.value = levelValue;
-
-    changeEffectLevel(levelValue);
-  });
+  initSlider(changeEffectLevel);
 })();
