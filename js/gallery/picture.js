@@ -1,7 +1,9 @@
 'use strict';
 
 (function () {
-  const generatePictures = window.data.generatePictures;
+  const backendLoad = window.backend.load;
+
+  const loadErrorHandler = window.backend.loadErrorHandler;
 
   const userPictureTemplate = document.querySelector(`#picture`)
   .content
@@ -21,10 +23,12 @@
   };
 
   const renderPictures = function (picturesData) {
+    picture.picturesData = picturesData;
     const fragment = document.createDocumentFragment();
     const usersPictures = document.querySelector(`.pictures`);
 
-    picturesData.forEach((pictureObj) => {
+    picturesData.forEach((pictureObj, index) => {
+      pictureObj.id = `photo-${index}`;
       const pictureEl = createPictureElement(pictureObj);
       fragment.appendChild(pictureEl);
     });
@@ -32,11 +36,7 @@
     usersPictures.appendChild(fragment);
   };
 
-  const picturesData = generatePictures();
-
-  renderPictures(picturesData);
-
-  picture.picturesData = picturesData;
+  backendLoad(renderPictures, loadErrorHandler);
 
   window.picture = picture;
 })();

@@ -6,7 +6,6 @@
 
   const doIfEscEvent = window.util.keyboard.doIfEscEvent;
   const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
-  const picturesData = window.picture.picturesData;
 
   const pageBody = document.querySelector(`body`);
 
@@ -28,7 +27,7 @@
       src="${commentObj.avatar}"
       alt="${commentObj.name}"
       width="${SOCIAL_PICTURE_SIZE}" height="${SOCIAL_PICTURE_SIZE}">
-    <p class="social__text">${commentObj.comment}</p>
+    <p class="social__text">${commentObj.message}</p>
     </li>
     `;
   };
@@ -77,7 +76,7 @@
   picturesSection.addEventListener(`click`, function (evt) {
     if (evt.target.closest(`.picture`) !== null) {
       const pictureId = evt.target.closest(`.picture`).id;
-      const pictureData = picturesData.find((item) => item.id === pictureId);
+      const pictureData = window.picture.picturesData.find((item) => item.id === pictureId);
       fillBigPicture(pictureData);
       hideElements();
       showBigPicture();
