@@ -1449,3 +1449,14 @@ main {
 .hidden {
   display: none;
 }
+
+.error-message {
+  z-index: 100;
+  margin: 0 auto;
+  text-align: center;
+  background-color: red;
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-size: 20px;
+}
