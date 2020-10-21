@@ -3,7 +3,7 @@
 (function () {
   const backendLoad = window.backend.load;
 
-  const loadErrorHandler = window.backend.loadErrorHandler;
+  const onLoadErrorCallback = window.backend.onLoadErrorCallback;
 
   const userPictureTemplate = document.querySelector(`#picture`)
   .content
@@ -36,7 +36,7 @@
     usersPictures.appendChild(fragment);
   };
 
-  backendLoad(renderPictures, loadErrorHandler);
+  backendLoad(renderPictures, onLoadErrorCallback);
 
   window.picture = picture;
 })();

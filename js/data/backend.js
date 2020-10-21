@@ -12,7 +12,7 @@
 
   const backend = {};
 
-  backend.loadErrorHandler = function (errorMessage) {
+  backend.onLoadErrorCallback = function (errorMessage) {
     const node = document.createElement(`div`);
     node.classList.add(`error-message`);
 
