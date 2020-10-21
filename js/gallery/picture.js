@@ -1,7 +1,9 @@
 'use strict';
 
 (function () {
-  const generatePictures = window.data.generatePictures;
+  const backendLoad = window.backend.load;
+
+  const onLoadErrorCallback = window.backend.onLoadErrorCallback;
 
   const userPictureTemplate = document.querySelector(`#picture`)
   .content
@@ -24,7 +26,8 @@
     const fragment = document.createDocumentFragment();
     const usersPictures = document.querySelector(`.pictures`);
 
-    picturesData.forEach((pictureObj) => {
+    picturesData.forEach((pictureObj, index) => {
+      pictureObj.id = `photo-${index}`;
       const pictureEl = createPictureElement(pictureObj);
       fragment.appendChild(pictureEl);
     });
@@ -32,11 +35,12 @@
     usersPictures.appendChild(fragment);
   };
 
-  const picturesData = generatePictures();
+  const onLoadPictures = function (picturesData) {
+    renderPictures(picturesData);
+    window.picture.picturesData = [...picturesData];
+  };
 
-  renderPictures(picturesData);
-
-  picture.picturesData = picturesData;
+  backendLoad(onLoadPictures, onLoadErrorCallback);
 
   window.picture = picture;
 })();

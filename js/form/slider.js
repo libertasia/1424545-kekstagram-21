@@ -15,7 +15,7 @@
 
       const shiftX = startCoordX - moveEvt.clientX;
       const pinMaxPose = effectLevelPin.parentElement.offsetWidth;
-      let newPinPos = effectLevelPin.offsetLeft - shiftX;
+      const newPinPos = effectLevelPin.offsetLeft - shiftX;
       if (newPinPos >= 0 && newPinPos <= pinMaxPose) {
 
         effectLevelPin.style.left = `${newPinPos}px`;
