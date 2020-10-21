@@ -2,6 +2,7 @@
 
 (function () {
   const URL_LOAD = `https://21.javascript.pages.academy/kekstagram/data`;
+  const URL_SAVE = `https://21.javascript.pages.academy/kekstagram`;
 
   const TIMEOUT_IN_MS = 10000;
 
@@ -49,6 +50,13 @@
 
     xhr.open(`GET`, URL_LOAD);
     xhr.send();
+  };
+
+  backend.save = function (data, onLoad, onError) {
+    const xhr = createRequestObject(onLoad, onError);
+
+    xhr.open(`POST`, URL_SAVE);
+    xhr.send(data);
   };
 
   window.backend = backend;

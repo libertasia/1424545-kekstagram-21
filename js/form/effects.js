@@ -4,14 +4,14 @@
 (function () {
   const MAX_EFFECT_LEVEL_VALUE = 100;
 
-  const uploadFileForm = window.pictureSize.uploadFileForm;
+  const uploadFileContainer = window.pictureSize.uploadFileContainer;
   const imgUploadPreview = window.pictureSize.imgUploadPreview;
   const effectLevelSlider = window.form.effectLevelSlider;
   const initSlider = window.slider.initSlider;
 
-  const effectLevelPin = uploadFileForm.querySelector(`.effect-level__pin`);
-  const effectLevelDepth = uploadFileForm.querySelector(`.effect-level__depth`);
-  const effectLevelValueInput = uploadFileForm.querySelector(`.effect-level__value`);
+  const effectLevelPin = uploadFileContainer.querySelector(`.effect-level__pin`);
+  const effectLevelDepth = uploadFileContainer.querySelector(`.effect-level__depth`);
+  const effectLevelValueInput = uploadFileContainer.querySelector(`.effect-level__value`);
 
   let activeFilter = null;
 
@@ -85,7 +85,7 @@
     effectLevelValueInput.setAttribute(`value`, levelValue);
   };
 
-  uploadFileForm.addEventListener(`change`, onUploadFileFormChange);
+  uploadFileContainer.addEventListener(`change`, onUploadFileFormChange);
 
   initSlider(changeEffectLevel);
 })();

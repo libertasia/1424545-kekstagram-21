@@ -8,15 +8,15 @@
 
   const MAX_PICTURE_SIZE = 100;
 
-  const uploadFileForm = document.querySelector(`.img-upload__overlay`);
-  const increaseImgSizeBtn = uploadFileForm.querySelector(`.scale__control--bigger`);
-  const decreaseImgSizeBtn = uploadFileForm.querySelector(`.scale__control--smaller`);
-  const imgSizeValueInput = uploadFileForm.querySelector(`.scale__control--value`);
-  const imgUploadPreview = uploadFileForm.querySelector(`.img-upload__preview img`);
+  const uploadFileContainer = document.querySelector(`.img-upload__overlay`);
+  const increaseImgSizeBtn = uploadFileContainer.querySelector(`.scale__control--bigger`);
+  const decreaseImgSizeBtn = uploadFileContainer.querySelector(`.scale__control--smaller`);
+  const imgSizeValueInput = uploadFileContainer.querySelector(`.scale__control--value`);
+  const imgUploadPreview = uploadFileContainer.querySelector(`.img-upload__preview img`);
 
   const pictureSize = {};
 
-  pictureSize.uploadFileForm = uploadFileForm;
+  pictureSize.uploadFileContainer = uploadFileContainer;
   pictureSize.imgSizeValueInput = imgSizeValueInput;
   pictureSize.imgUploadPreview = imgUploadPreview;
 
