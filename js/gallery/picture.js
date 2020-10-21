@@ -23,7 +23,6 @@
   };
 
   const renderPictures = function (picturesData) {
-    picture.picturesData = picturesData;
     const fragment = document.createDocumentFragment();
     const usersPictures = document.querySelector(`.pictures`);
 
@@ -36,7 +35,12 @@
     usersPictures.appendChild(fragment);
   };
 
-  backendLoad(renderPictures, onLoadErrorCallback);
+  const onLoadPictures = function (picturesData) {
+    renderPictures(picturesData);
+    window.picture.picturesData = [...picturesData];
+  };
+
+  backendLoad(onLoadPictures, onLoadErrorCallback);
 
   window.picture = picture;
 })();
