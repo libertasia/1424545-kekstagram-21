@@ -2,7 +2,6 @@
 
 (function () {
   const backendLoad = window.backend.load;
-
   const onLoadErrorCallback = window.backend.onLoadErrorCallback;
 
   const userPictureTemplate = document.querySelector(`#picture`)

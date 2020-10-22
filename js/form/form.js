@@ -2,6 +2,8 @@
 // Загрузка изображения и показ формы редактирования:
 
 (function () {
+  const MAX_IMG_SIZE_VALUE = `100%`;
+
   const doIfEscEvent = window.util.keyboard.doIfEscEvent;
   const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
   const pageBody = window.preview.pageBody;
@@ -19,18 +21,14 @@
   const rbtEffectNone = uploadFileContainer.querySelector(`#effect-none`);
   const pageMain = pageBody.querySelector(`main`);
   const imgUploadForm = document.querySelector(`.img-upload__form`);
-
   const uploadSuccessMessage = document.querySelector(`#success`)
   .content
   .querySelector(`.success`);
-
-  const uploadSuccessMessageCloseBtn = uploadSuccessMessage.querySelector(`.success__button`);
-  const uploadSuccessMessageDiv = uploadSuccessMessage.querySelector(`.success__inner`);
-
   const uploadErrorMessage = document.querySelector(`#error`)
   .content
   .querySelector(`.error`);
-
+  const uploadSuccessMessageCloseBtn = uploadSuccessMessage.querySelector(`.success__button`);
+  const uploadSuccessMessageDiv = uploadSuccessMessage.querySelector(`.success__inner`);
   const uploadErrorMessageCloseBtn = uploadErrorMessage.querySelector(`.error__button`);
   const uploadErrorMessageDiv = uploadErrorMessage.querySelector(`.error__inner`);
 
@@ -46,7 +44,7 @@
   };
 
   const resetImgParams = function () {
-    imgSizeValueInput.value = `100%`;
+    imgSizeValueInput.value = MAX_IMG_SIZE_VALUE;
     changePictureSize();
     imgUploadPreview.classList.remove(...imgUploadPreview.classList);
     rbtEffectNone.checked = true;

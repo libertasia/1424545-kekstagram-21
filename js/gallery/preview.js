@@ -8,11 +8,8 @@
   const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
 
   const pageBody = document.querySelector(`body`);
-
   const picturesSection = document.querySelector(`.pictures`);
-
   const bigPicture = document.querySelector(`.big-picture`);
-
   const bigPictureCloseBtn = bigPicture.querySelector(`.big-picture__cancel`);
 
   const preview = {};
@@ -22,12 +19,12 @@
   const createSocialComment = function (commentObj) {
     return `
     <li class="social__comment">
-    <img
-      class="social__picture"
-      src="${commentObj.avatar}"
-      alt="${commentObj.name}"
-      width="${SOCIAL_PICTURE_SIZE}" height="${SOCIAL_PICTURE_SIZE}">
-    <p class="social__text">${commentObj.message}</p>
+      <img
+        class="social__picture"
+        src="${commentObj.avatar}"
+        alt="${commentObj.name}"
+        width="${SOCIAL_PICTURE_SIZE}" height="${SOCIAL_PICTURE_SIZE}">
+      <p class="social__text">${commentObj.message}</p>
     </li>
     `;
   };

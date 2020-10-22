@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  const PERCENT_MULTIPLIER = 100;
+
   const effectLevelPin = document.querySelector(`.effect-level__pin`);
   const effectLevelDepth = document.querySelector(`.effect-level__depth`);
 
@@ -20,7 +22,7 @@
 
         effectLevelPin.style.left = `${newPinPos}px`;
 
-        const levelValue = Math.round(effectLevelPin.offsetLeft / pinMaxPose * 100);
+        const levelValue = Math.round(effectLevelPin.offsetLeft / pinMaxPose * PERCENT_MULTIPLIER);
 
         effectLevelDepth.style.width = `${levelValue}%`;
 

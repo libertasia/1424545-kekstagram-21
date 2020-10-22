@@ -3,9 +3,7 @@
 
 (function () {
   const PICTURE_SCALE_STEP = 25;
-
   const MIN_PICTURE_SIZE = 25;
-
   const MAX_PICTURE_SIZE = 100;
 
   const uploadFileContainer = document.querySelector(`.img-upload__overlay`);

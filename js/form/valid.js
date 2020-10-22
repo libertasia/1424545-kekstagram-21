@@ -13,7 +13,6 @@
     TOO_MANY_HASHTAGS: `нельзя указать больше пяти хэш-тегов;`
   };
   const MAX_HASHTAGS_COUNT = 5;
-
   const HASHTAG_VALIDITY_REGEX = RegExp(`^#[a-zA-Z0-9а-яА-ЯёЁ]{1,19}$`);
 
   const hashtagsInput = window.form.hashtagsInput;

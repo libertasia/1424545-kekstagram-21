@@ -56,12 +56,12 @@
     }
   };
 
-  const onUploadFileFormChange = function (evt) {
+  const onUploadFileContainerChange = function (evt) {
     if (evt.target.matches(`input[type="radio"]`)) {
       imgUploadPreview.style.filter = ``;
       effectLevelValueInput.setAttribute(`value`, MAX_EFFECT_LEVEL_VALUE);
-      effectLevelPin.style.left = `100%`;
-      effectLevelDepth.style.width = `100%`;
+      effectLevelPin.style.left = `${MAX_EFFECT_LEVEL_VALUE}%`;
+      effectLevelDepth.style.width = `${MAX_EFFECT_LEVEL_VALUE}%`;
       imgUploadPreview.className = `effects__preview--${evt.target.value}`;
       activeFilter = effect[evt.target.value];
 
@@ -79,13 +79,13 @@
       imgUploadPreview.style.filter = ``;
       return;
     }
-    const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / 100;
+    const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / MAX_EFFECT_LEVEL_VALUE;
 
     imgUploadPreview.style.filter = `${activeFilter.type}(${value}${activeFilter.units})`;
     effectLevelValueInput.setAttribute(`value`, levelValue);
   };
 
-  uploadFileContainer.addEventListener(`change`, onUploadFileFormChange);
+  uploadFileContainer.addEventListener(`change`, onUploadFileContainerChange);
 
   initSlider(changeEffectLevel);
 })();
