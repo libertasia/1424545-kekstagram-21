@@ -56,12 +56,17 @@
     }
   };
 
+  const resetEffectLevel = function () {
+    imgUploadPreview.style.filter = ``;
+    effectLevelValueInput.value = MAX_EFFECT_LEVEL_VALUE;
+    effectLevelPin.style.left = `${MAX_EFFECT_LEVEL_VALUE}%`;
+    effectLevelDepth.style.width = `${MAX_EFFECT_LEVEL_VALUE}%`;
+  };
+
   const onUploadFileContainerChange = function (evt) {
     if (evt.target.matches(`input[type="radio"]`)) {
-      imgUploadPreview.style.filter = ``;
-      effectLevelValueInput.setAttribute(`value`, MAX_EFFECT_LEVEL_VALUE);
-      effectLevelPin.style.left = `${MAX_EFFECT_LEVEL_VALUE}%`;
-      effectLevelDepth.style.width = `${MAX_EFFECT_LEVEL_VALUE}%`;
+      resetEffectLevel();
+
       imgUploadPreview.className = `effects__preview--${evt.target.value}`;
       activeFilter = effect[evt.target.value];
 
@@ -82,7 +87,7 @@
     const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / MAX_EFFECT_LEVEL_VALUE;
 
     imgUploadPreview.style.filter = `${activeFilter.type}(${value}${activeFilter.units})`;
-    effectLevelValueInput.setAttribute(`value`, levelValue);
+    effectLevelValueInput.value = levelValue;
   };
 
   uploadFileContainer.addEventListener(`change`, onUploadFileContainerChange);

@@ -12,6 +12,8 @@
   const imgUploadPreview = window.pictureSize.imgUploadPreview;
   const changePictureSize = window.pictureSize.changePictureSize;
   const backendSave = window.backend.save;
+  const onUploadSuccessCallback = window.uploadResult.onUploadSuccessCallback;
+  const onUploadErrorCallback = window.uploadResult.onUploadErrorCallback;
 
   const uploadFileInput = document.querySelector(`#upload-file`);
   const uploadFileCloseBtn = uploadFileContainer.querySelector(`#upload-cancel`);
@@ -19,18 +21,7 @@
   const commentInput = uploadFileContainer.querySelector(`.text__description`);
   const effectLevelSlider = uploadFileContainer.querySelector(`.img-upload__effect-level`);
   const rbtEffectNone = uploadFileContainer.querySelector(`#effect-none`);
-  const pageMain = pageBody.querySelector(`main`);
   const imgUploadForm = document.querySelector(`.img-upload__form`);
-  const uploadSuccessMessage = document.querySelector(`#success`)
-  .content
-  .querySelector(`.success`);
-  const uploadErrorMessage = document.querySelector(`#error`)
-  .content
-  .querySelector(`.error`);
-  const uploadSuccessMessageCloseBtn = uploadSuccessMessage.querySelector(`.success__button`);
-  const uploadSuccessMessageDiv = uploadSuccessMessage.querySelector(`.success__inner`);
-  const uploadErrorMessageCloseBtn = uploadErrorMessage.querySelector(`.error__button`);
-  const uploadErrorMessageDiv = uploadErrorMessage.querySelector(`.error__inner`);
 
   const form = {};
 
@@ -47,6 +38,7 @@
     imgSizeValueInput.value = MAX_IMG_SIZE_VALUE;
     changePictureSize();
     imgUploadPreview.classList.remove(...imgUploadPreview.classList);
+    imgUploadPreview.style.filter = ``;
     rbtEffectNone.checked = true;
     effectLevelSlider.classList.add(`hidden`);
   };
@@ -84,88 +76,6 @@
   uploadFileCloseBtn.addEventListener(`keydown`, function (evt) {
     doIfEnterEvent(evt, closePopup);
   });
-
-  const isElementTarget = function (evt, element) {
-    if (evt.target === element) {
-      return true;
-    }
-    const children = Array.from(element.children);
-    let isChildClicked = false;
-    children.forEach((child) => {
-      if (evt.target === child) {
-        isChildClicked = true;
-      }
-    });
-    return isChildClicked;
-  };
-
-  const onUploadSuccessMouseUp = function (evt) {
-    if (!isElementTarget(evt, uploadSuccessMessageDiv)) {
-      closeUploadSuccessMessage();
-    }
-  };
-
-  const onUploadErrorMouseUp = function (evt) {
-    if (!isElementTarget(evt, uploadErrorMessageDiv)) {
-      closeUploadErrorMessage();
-    }
-  };
-
-  const onSuccessMessageEscPress = function (evt) {
-    doIfEscEvent(evt, closeUploadSuccessMessage);
-  };
-
-  const onErrorMessageEscPress = function (evt) {
-    doIfEscEvent(evt, closeUploadErrorMessage);
-  };
-
-  const onSuccessMessageCloseBtnKeydown = function (evt) {
-    doIfEnterEvent(evt, closeUploadSuccessMessage);
-  };
-
-  const onErrorMessageCloseBtnKeydown = function (evt) {
-    doIfEnterEvent(evt, closeUploadErrorMessage);
-  };
-
-  const closeUploadSuccessMessage = function () {
-    pageMain.removeChild(uploadSuccessMessage);
-
-    document.removeEventListener(`keydown`, onSuccessMessageEscPress);
-    document.removeEventListener(`mouseup`, onUploadSuccessMouseUp);
-
-    uploadSuccessMessageCloseBtn.removeEventListener(`click`, closeUploadSuccessMessage);
-    uploadSuccessMessageCloseBtn.removeEventListener(`keydown`, onSuccessMessageCloseBtnKeydown);
-  };
-
-  const closeUploadErrorMessage = function () {
-    pageMain.removeChild(uploadErrorMessage);
-
-    document.removeEventListener(`keydown`, onErrorMessageEscPress);
-    document.removeEventListener(`mouseup`, onUploadErrorMouseUp);
-
-    uploadErrorMessageCloseBtn.removeEventListener(`click`, closeUploadErrorMessage);
-    uploadErrorMessageCloseBtn.removeEventListener(`keydown`, onErrorMessageCloseBtnKeydown);
-  };
-
-  const onUploadSuccessCallback = function () {
-    pageMain.appendChild(uploadSuccessMessage);
-
-    document.addEventListener(`keydown`, onSuccessMessageEscPress);
-    document.addEventListener(`mouseup`, onUploadSuccessMouseUp);
-
-    uploadSuccessMessageCloseBtn.addEventListener(`click`, closeUploadSuccessMessage);
-    uploadSuccessMessageCloseBtn.addEventListener(`keydown`, onSuccessMessageCloseBtnKeydown);
-  };
-
-  const onUploadErrorCallback = function () {
-    pageMain.appendChild(uploadErrorMessage);
-
-    document.addEventListener(`keydown`, onErrorMessageEscPress);
-    document.addEventListener(`mouseup`, onUploadErrorMouseUp);
-
-    uploadErrorMessageCloseBtn.addEventListener(`click`, closeUploadErrorMessage);
-    uploadErrorMessageCloseBtn.addEventListener(`keydown`, onErrorMessageCloseBtnKeydown);
-  };
 
   const onImgFormUpload = function (evt) {
     evt.preventDefault();
