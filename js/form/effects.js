@@ -56,14 +56,14 @@
     }
   };
 
-  const resetEffectLevel = function () {
+  const resetEffectLevel = () => {
     imgUploadPreview.style.filter = ``;
     effectLevelValueInput.value = MAX_EFFECT_LEVEL_VALUE;
     effectLevelPin.style.left = `${MAX_EFFECT_LEVEL_VALUE}%`;
     effectLevelDepth.style.width = `${MAX_EFFECT_LEVEL_VALUE}%`;
   };
 
-  const onUploadFileContainerChange = function (evt) {
+  const onUploadFileContainerChange = (evt) => {
     if (evt.target.matches(`input[type="radio"]`)) {
       resetEffectLevel();
 
@@ -79,7 +79,7 @@
     }
   };
 
-  const changeEffectLevel = function (levelValue) {
+  const changeEffectLevel = (levelValue) => {
     if (!activeFilter) {
       imgUploadPreview.style.filter = ``;
       return;

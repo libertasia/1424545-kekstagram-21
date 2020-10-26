@@ -51,7 +51,7 @@
 
   const data = {};
 
-  const isPropertyValueUsed = function (propertyName, propertyValue, objArray) {
+  const isPropertyValueUsed = (propertyName, propertyValue, objArray) => {
     for (let i = 0; i < objArray.length; i++) {
       if (propertyValue === objArray[i][propertyName]) {
         return true;
@@ -60,7 +60,7 @@
     return false;
   };
 
-  const generateComments = function (count) {
+  const generateComments = (count) => {
     const comments = [];
     let name = ``;
     let comment = ``;
@@ -84,7 +84,7 @@
     return comments;
   };
 
-  data.generatePictures = function () {
+  data.generatePictures = () => {
     const pictures = [];
     let url = ``;
     for (let i = 0; i < PICTURES_COUNT; i++) {

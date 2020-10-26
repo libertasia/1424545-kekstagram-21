@@ -12,66 +12,50 @@
   .content
   .querySelector(`.error`);
   const successMessageCloseBtn = successMessage.querySelector(`.success__button`);
-  const successMessageDiv = successMessage.querySelector(`.success__inner`);
   const errorMessageCloseBtn = errorMessage.querySelector(`.error__button`);
-  const errorMessageDiv = errorMessage.querySelector(`.error__inner`);
 
   const uploadResult = {};
 
-  const renderResultMessages = function () {
+  const renderResultMessages = () => {
     pageMain.appendChild(successMessage);
     pageMain.appendChild(errorMessage);
     toggleMessage(successMessage);
     toggleMessage(errorMessage);
   };
 
-  const toggleMessage = function (msg) {
+  const toggleMessage = (msg) => {
     msg.classList.toggle(`hidden`);
   };
 
-  const isElementTarget = function (evt, element) {
-    if (evt.target === element) {
-      return true;
-    }
-    const children = Array.from(element.children);
-    let isChildClicked = false;
-    children.forEach((child) => {
-      if (evt.target === child) {
-        isChildClicked = true;
-      }
-    });
-    return isChildClicked;
-  };
-
-  const onSuccessMessageMouseUp = function (evt) {
-    if (!isElementTarget(evt, successMessageDiv)) {
+  const onSuccessMessageMouseUp = (evt) => {
+    if (evt.target.className === `success`) {
       onSuccessMessageClose();
     }
   };
 
-  const onErrorMessageMouseUp = function (evt) {
-    if (!isElementTarget(evt, errorMessageDiv)) {
+  const onErrorMessageMouseUp = (evt) => {
+    if (evt.target.className === `error`) {
       onErrorMessageClose();
     }
   };
 
-  const onSuccessMessageEscPress = function (evt) {
+  const onSuccessMessageEscPress = (evt) => {
     doIfEscEvent(evt, onSuccessMessageClose);
   };
 
-  const onErrorMessageEscPress = function (evt) {
+  const onErrorMessageEscPress = (evt) => {
     doIfEscEvent(evt, onErrorMessageClose);
   };
 
-  const onSuccessMessageCloseBtnKeydown = function (evt) {
+  const onSuccessMessageCloseBtnKeydown = (evt) => {
     doIfEnterEvent(evt, onSuccessMessageClose);
   };
 
-  const onErrorMessageCloseBtnKeydown = function (evt) {
+  const onErrorMessageCloseBtnKeydown = (evt) => {
     doIfEnterEvent(evt, onErrorMessageClose);
   };
 
-  const onSuccessMessageClose = function () {
+  const onSuccessMessageClose = () => {
     toggleMessage(successMessage);
 
     document.removeEventListener(`keydown`, onSuccessMessageEscPress);
@@ -81,7 +65,7 @@
     successMessageCloseBtn.removeEventListener(`keydown`, onSuccessMessageCloseBtnKeydown);
   };
 
-  const onErrorMessageClose = function () {
+  const onErrorMessageClose = () => {
     toggleMessage(errorMessage);
 
     document.removeEventListener(`keydown`, onErrorMessageEscPress);
@@ -91,7 +75,7 @@
     errorMessageCloseBtn.removeEventListener(`keydown`, onErrorMessageCloseBtnKeydown);
   };
 
-  uploadResult.onUploadSuccessCallback = function () {
+  uploadResult.onUploadSuccessCallback = () => {
     toggleMessage(successMessage);
 
     document.addEventListener(`keydown`, onSuccessMessageEscPress);
@@ -101,7 +85,7 @@
     successMessageCloseBtn.addEventListener(`keydown`, onSuccessMessageCloseBtnKeydown);
   };
 
-  uploadResult.onUploadErrorCallback = function () {
+  uploadResult.onUploadErrorCallback = () => {
     toggleMessage(errorMessage);
 
     document.addEventListener(`keydown`, onErrorMessageEscPress);

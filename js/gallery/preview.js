@@ -16,7 +16,7 @@
 
   preview.pageBody = pageBody;
 
-  const createSocialComment = function (commentObj) {
+  const createSocialComment = (commentObj) => {
     return `
     <li class="social__comment">
       <img
@@ -29,7 +29,7 @@
     `;
   };
 
-  const fillBigPicture = function (picture) {
+  const fillBigPicture = (picture) => {
     bigPicture.querySelector(`.big-picture__img`).querySelector(`img`).src = picture.url;
     bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
     bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
@@ -39,38 +39,38 @@
     bigPicture.querySelector(`.social__comments`).innerHTML = comments.join(``);
   };
 
-  const hideElements = function () {
+  const hideElements = () => {
     bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
     bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
   };
 
-  const onBigPictureEscPress = function (evt) {
+  const onBigPictureEscPress = (evt) => {
     doIfEscEvent(evt, closeBigPicture);
   };
 
-  const showBigPicture = function () {
+  const showBigPicture = () => {
     bigPicture.classList.remove(`hidden`);
     pageBody.classList.add(`modal-open`);
 
     document.addEventListener(`keydown`, onBigPictureEscPress);
   };
 
-  const closeBigPicture = function () {
+  const closeBigPicture = () => {
     bigPicture.classList.add(`hidden`);
     pageBody.classList.remove(`modal-open`);
 
     document.removeEventListener(`keydown`, onBigPictureEscPress);
   };
 
-  bigPictureCloseBtn.addEventListener(`click`, function () {
+  bigPictureCloseBtn.addEventListener(`click`, () => {
     closeBigPicture();
   });
 
-  bigPictureCloseBtn.addEventListener(`keydown`, function (evt) {
+  bigPictureCloseBtn.addEventListener(`keydown`, (evt) => {
     doIfEnterEvent(evt, closeBigPicture);
   });
 
-  picturesSection.addEventListener(`click`, function (evt) {
+  picturesSection.addEventListener(`click`, (evt) => {
     if (evt.target.closest(`.picture`) !== null) {
       const pictureId = evt.target.closest(`.picture`).id;
       const pictureData = window.picture.picturesData.find((item) => item.id === pictureId);

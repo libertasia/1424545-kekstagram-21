@@ -18,12 +18,12 @@
   pictureSize.imgSizeValueInput = imgSizeValueInput;
   pictureSize.imgUploadPreview = imgUploadPreview;
 
-  const changePictureSize = function () {
+  const changePictureSize = () => {
     const currentValue = parseInt(imgSizeValueInput.value, 10);
     imgUploadPreview.style.transform = `scale(${currentValue / MAX_PICTURE_SIZE})`;
   };
 
-  const increaseImgSizeValueInput = function () {
+  const increaseImgSizeValueInput = () => {
     const currentValue = parseInt(imgSizeValueInput.value, 10);
     let newValue = currentValue + PICTURE_SCALE_STEP;
     if (newValue > MAX_PICTURE_SIZE) {
@@ -32,7 +32,7 @@
     imgSizeValueInput.value = `${newValue}%`;
   };
 
-  const decreaseImgSizeValueInput = function () {
+  const decreaseImgSizeValueInput = () => {
     const currentValue = parseInt(imgSizeValueInput.value, 10);
     let newValue = currentValue - PICTURE_SCALE_STEP;
     if (newValue < MIN_PICTURE_SIZE) {
@@ -41,12 +41,12 @@
     imgSizeValueInput.value = `${newValue}%`;
   };
 
-  increaseImgSizeBtn.addEventListener(`click`, function () {
+  increaseImgSizeBtn.addEventListener(`click`, () =>{
     increaseImgSizeValueInput();
     changePictureSize();
   });
 
-  decreaseImgSizeBtn.addEventListener(`click`, function () {
+  decreaseImgSizeBtn.addEventListener(`click`, () => {
     decreaseImgSizeValueInput();
     changePictureSize();
   });

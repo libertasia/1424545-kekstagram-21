@@ -8,11 +8,11 @@
 
   const slider = {};
 
-  const onEffectLevelPinMouseDown = function (evt, callback) {
+  const onEffectLevelPinMouseDown = (evt, callback) => {
     evt.preventDefault();
     let startCoordX = evt.clientX;
 
-    const onEffectLevelPinMouseMove = function (moveEvt) {
+    const onEffectLevelPinMouseMove = (moveEvt) => {
       moveEvt.preventDefault();
 
       const shiftX = startCoordX - moveEvt.clientX;
@@ -32,7 +32,7 @@
       }
     };
 
-    const onEffectLevelPinMouseUp = function (upEvt) {
+    const onEffectLevelPinMouseUp = (upEvt) => {
       upEvt.preventDefault();
 
       document.removeEventListener(`mousemove`, onEffectLevelPinMouseMove);
@@ -43,8 +43,8 @@
     document.addEventListener(`mouseup`, onEffectLevelPinMouseUp);
   };
 
-  slider.initSlider = function (callback) {
-    effectLevelPin.addEventListener(`mousedown`, function (evt) {
+  slider.initSlider = (callback) => {
+    effectLevelPin.addEventListener(`mousedown`, (evt) => {
       if (typeof callback === `function`) {
         onEffectLevelPinMouseDown(evt, callback);
       }

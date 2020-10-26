@@ -28,13 +28,13 @@
   form.hashtagsInput = hashtagsInput;
   form.effectLevelSlider = effectLevelSlider;
 
-  const onPopupEscPress = function (evt) {
+  const onPopupEscPress = (evt) => {
     if (document.activeElement !== hashtagsInput && document.activeElement !== commentInput) {
       doIfEscEvent(evt, closePopup);
     }
   };
 
-  const resetImgParams = function () {
+  const resetImgParams = () => {
     imgSizeValueInput.value = MAX_IMG_SIZE_VALUE;
     changePictureSize();
     imgUploadPreview.classList.remove(...imgUploadPreview.classList);
@@ -43,7 +43,7 @@
     effectLevelSlider.classList.add(`hidden`);
   };
 
-  const openPopup = function () {
+  const openPopup = () => {
     uploadFileContainer.classList.remove(`hidden`);
     pageBody.classList.add(`modal-open`);
 
@@ -52,7 +52,7 @@
     document.addEventListener(`keydown`, onPopupEscPress);
   };
 
-  const closePopup = function () {
+  const closePopup = () => {
     uploadFileContainer.classList.add(`hidden`);
     uploadFileInput.value = ``;
     hashtagsInput.value = ``;
@@ -65,19 +65,19 @@
     document.removeEventListener(`keydown`, onPopupEscPress);
   };
 
-  uploadFileInput.addEventListener(`change`, function () {
+  uploadFileInput.addEventListener(`change`, () => {
     openPopup();
   });
 
-  uploadFileCloseBtn.addEventListener(`click`, function () {
+  uploadFileCloseBtn.addEventListener(`click`, () => {
     closePopup();
   });
 
-  uploadFileCloseBtn.addEventListener(`keydown`, function (evt) {
+  uploadFileCloseBtn.addEventListener(`keydown`, (evt) => {
     doIfEnterEvent(evt, closePopup);
   });
 
-  const onImgFormUpload = function (evt) {
+  const onImgFormUpload = (evt) => {
     evt.preventDefault();
     const formData = new FormData(imgUploadForm);
     backendSave(formData, onUploadSuccessCallback, onUploadErrorCallback);
