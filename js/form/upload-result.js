@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  const ERROR = `error`;
+  const SUCCESS = `success`;
+
   const doIfEscEvent = window.util.keyboard.doIfEscEvent;
   const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
 
@@ -11,8 +14,6 @@
   const errorMessage = document.querySelector(`#error`)
   .content
   .querySelector(`.error`);
-  const successMessageCloseBtn = successMessage.querySelector(`.success__button`);
-  const errorMessageCloseBtn = errorMessage.querySelector(`.error__button`);
 
   const uploadResult = {};
 
@@ -27,72 +28,50 @@
     msg.classList.toggle(`hidden`);
   };
 
-  const onSuccessMessageMouseUp = (evt) => {
-    if (evt.target.className === `success`) {
-      onSuccessMessageClose();
-    }
-  };
+  const showResultMessage = (status) => {
+    const msgSection = pageMain.querySelector(`.${status}`);
+    const msgCloseBtn = msgSection.querySelector(`.${status}__button`);
+    toggleMessage(msgSection);
 
-  const onErrorMessageMouseUp = (evt) => {
-    if (evt.target.className === `error`) {
-      onErrorMessageClose();
-    }
-  };
+    const closeResultMessage = () => {
+      toggleMessage(msgSection);
 
-  const onSuccessMessageEscPress = (evt) => {
-    doIfEscEvent(evt, onSuccessMessageClose);
-  };
+      document.removeEventListener(`keydown`, onDocumentKeydown);
+      document.removeEventListener(`click`, onMessagePopupClick);
+      msgCloseBtn.removeEventListener(`click`, onMsgCloseBtnClick);
+      msgCloseBtn.removeEventListener(`keydown`, onMsgCloseBtnKeydown);
+    };
 
-  const onErrorMessageEscPress = (evt) => {
-    doIfEscEvent(evt, onErrorMessageClose);
-  };
+    const onMsgCloseBtnClick = () => {
+      closeResultMessage();
+    };
 
-  const onSuccessMessageCloseBtnKeydown = (evt) => {
-    doIfEnterEvent(evt, onSuccessMessageClose);
-  };
+    const onMsgCloseBtnKeydown = (evt) => {
+      doIfEnterEvent(evt, closeResultMessage);
+    };
 
-  const onErrorMessageCloseBtnKeydown = (evt) => {
-    doIfEnterEvent(evt, onErrorMessageClose);
-  };
+    const onDocumentKeydown = (evt) => {
+      doIfEscEvent(evt, closeResultMessage);
+    };
 
-  const onSuccessMessageClose = () => {
-    toggleMessage(successMessage);
+    const onMessagePopupClick = ({target}) => {
+      if (target.className === status) {
+        closeResultMessage();
+      }
+    };
 
-    document.removeEventListener(`keydown`, onSuccessMessageEscPress);
-    document.removeEventListener(`mouseup`, onSuccessMessageMouseUp);
-
-    successMessageCloseBtn.removeEventListener(`click`, onSuccessMessageClose);
-    successMessageCloseBtn.removeEventListener(`keydown`, onSuccessMessageCloseBtnKeydown);
-  };
-
-  const onErrorMessageClose = () => {
-    toggleMessage(errorMessage);
-
-    document.removeEventListener(`keydown`, onErrorMessageEscPress);
-    document.removeEventListener(`mouseup`, onErrorMessageMouseUp);
-
-    errorMessageCloseBtn.removeEventListener(`click`, onErrorMessageClose);
-    errorMessageCloseBtn.removeEventListener(`keydown`, onErrorMessageCloseBtnKeydown);
+    document.addEventListener(`keydown`, onDocumentKeydown);
+    document.addEventListener(`click`, onMessagePopupClick);
+    msgCloseBtn.addEventListener(`click`, onMsgCloseBtnClick);
+    msgCloseBtn.addEventListener(`keydown`, onMsgCloseBtnKeydown);
   };
 
   uploadResult.onUploadSuccessCallback = () => {
-    toggleMessage(successMessage);
-
-    document.addEventListener(`keydown`, onSuccessMessageEscPress);
-    document.addEventListener(`mouseup`, onSuccessMessageMouseUp);
-
-    successMessageCloseBtn.addEventListener(`click`, onSuccessMessageClose);
-    successMessageCloseBtn.addEventListener(`keydown`, onSuccessMessageCloseBtnKeydown);
+    showResultMessage(SUCCESS);
   };
 
   uploadResult.onUploadErrorCallback = () => {
-    toggleMessage(errorMessage);
-
-    document.addEventListener(`keydown`, onErrorMessageEscPress);
-    document.addEventListener(`mouseup`, onErrorMessageMouseUp);
-
-    errorMessageCloseBtn.addEventListener(`click`, onErrorMessageClose);
-    errorMessageCloseBtn.addEventListener(`keydown`, onErrorMessageCloseBtnKeydown);
+    showResultMessage(ERROR);
   };
 
   renderResultMessages();
