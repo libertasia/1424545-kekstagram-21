@@ -4,14 +4,14 @@
 (function () {
   const MAX_EFFECT_LEVEL_VALUE = 100;
 
-  const uploadFileForm = window.pictureSize.uploadFileForm;
+  const uploadFileContainer = window.pictureSize.uploadFileContainer;
   const imgUploadPreview = window.pictureSize.imgUploadPreview;
   const effectLevelSlider = window.form.effectLevelSlider;
   const initSlider = window.slider.initSlider;
 
-  const effectLevelPin = uploadFileForm.querySelector(`.effect-level__pin`);
-  const effectLevelDepth = uploadFileForm.querySelector(`.effect-level__depth`);
-  const effectLevelValueInput = uploadFileForm.querySelector(`.effect-level__value`);
+  const effectLevelPin = uploadFileContainer.querySelector(`.effect-level__pin`);
+  const effectLevelDepth = uploadFileContainer.querySelector(`.effect-level__depth`);
+  const effectLevelValueInput = uploadFileContainer.querySelector(`.effect-level__value`);
 
   let activeFilter = null;
 
@@ -56,12 +56,17 @@
     }
   };
 
-  const onUploadFileFormChange = function (evt) {
+  const resetEffectLevel = () => {
+    imgUploadPreview.style.filter = ``;
+    effectLevelValueInput.value = MAX_EFFECT_LEVEL_VALUE;
+    effectLevelPin.style.left = `${MAX_EFFECT_LEVEL_VALUE}%`;
+    effectLevelDepth.style.width = `${MAX_EFFECT_LEVEL_VALUE}%`;
+  };
+
+  const onUploadFileContainerChange = (evt) => {
     if (evt.target.matches(`input[type="radio"]`)) {
-      imgUploadPreview.style.filter = ``;
-      effectLevelValueInput.setAttribute(`value`, MAX_EFFECT_LEVEL_VALUE);
-      effectLevelPin.style.left = `100%`;
-      effectLevelDepth.style.width = `100%`;
+      resetEffectLevel();
+
       imgUploadPreview.className = `effects__preview--${evt.target.value}`;
       activeFilter = effect[evt.target.value];
 
@@ -74,18 +79,18 @@
     }
   };
 
-  const changeEffectLevel = function (levelValue) {
+  const changeEffectLevel = (levelValue) => {
     if (!activeFilter) {
       imgUploadPreview.style.filter = ``;
       return;
     }
-    const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / 100;
+    const value = activeFilter.min + (activeFilter.max - activeFilter.min) * levelValue / MAX_EFFECT_LEVEL_VALUE;
 
     imgUploadPreview.style.filter = `${activeFilter.type}(${value}${activeFilter.units})`;
-    effectLevelValueInput.setAttribute(`value`, levelValue);
+    effectLevelValueInput.value = levelValue;
   };
 
-  uploadFileForm.addEventListener(`change`, onUploadFileFormChange);
+  uploadFileContainer.addEventListener(`change`, onUploadFileContainerChange);
 
   initSlider(changeEffectLevel);
 })();

@@ -2,7 +2,6 @@
 
 (function () {
   const backendLoad = window.backend.load;
-
   const onLoadErrorCallback = window.backend.onLoadErrorCallback;
 
   const userPictureTemplate = document.querySelector(`#picture`)
@@ -11,7 +10,7 @@
 
   const picture = {};
 
-  const createPictureElement = function (pictureObj) {
+  const createPictureElement = (pictureObj) => {
     const pictureElement = userPictureTemplate.cloneNode(true);
 
     pictureElement.id = pictureObj.id;
@@ -22,7 +21,7 @@
     return pictureElement;
   };
 
-  const renderPictures = function (picturesData) {
+  const renderPictures = (picturesData) => {
     const fragment = document.createDocumentFragment();
     const usersPictures = document.querySelector(`.pictures`);
 
@@ -35,7 +34,7 @@
     usersPictures.appendChild(fragment);
   };
 
-  const onLoadPictures = function (picturesData) {
+  const onLoadPictures = (picturesData) => {
     renderPictures(picturesData);
     window.picture.picturesData = [...picturesData];
   };
