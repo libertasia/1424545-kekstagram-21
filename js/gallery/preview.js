@@ -3,6 +3,7 @@
 
 (function () {
   const SOCIAL_PICTURE_SIZE = 35;
+  const COMMENTS_COUNT = 5;
 
   const doIfEscEvent = window.util.keyboard.doIfEscEvent;
   const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
@@ -11,8 +12,11 @@
   const picturesSection = document.querySelector(`.pictures`);
   const bigPicture = document.querySelector(`.big-picture`);
   const bigPictureCloseBtn = bigPicture.querySelector(`.big-picture__cancel`);
+  const commentsLoaderBtn = bigPicture.querySelector(`.comments-loader`);
 
   const preview = {};
+  let currentPicture;
+  let visibleCommentsCount = 0;
 
   preview.pageBody = pageBody;
 
@@ -35,13 +39,24 @@
     bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
     bigPicture.querySelector(`.social__caption`).textContent = picture.description;
 
-    const comments = picture.comments.map((comment) => createSocialComment(comment));
+    const comments = picture.comments.slice(0, COMMENTS_COUNT).map((comment) => createSocialComment(comment));
     bigPicture.querySelector(`.social__comments`).innerHTML = comments.join(``);
+    currentPicture = picture;
+    visibleCommentsCount = comments.length;
   };
 
-  const hideElements = () => {
+  const hideLoadCommentsBtn = () => {
     bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
-    bigPicture.querySelector(`.comments-loader`).classList.add(`hidden`);
+    commentsLoaderBtn.classList.add(`hidden`);
+  };
+
+  const loadMoreComments = () => {
+    const comments = currentPicture.comments.slice(visibleCommentsCount, visibleCommentsCount + COMMENTS_COUNT).map((comment) => createSocialComment(comment));
+    bigPicture.querySelector(`.social__comments`).innerHTML += comments.join(``);
+    visibleCommentsCount += comments.length;
+    if (visibleCommentsCount === currentPicture.comments.length) {
+      hideLoadCommentsBtn();
+    }
   };
 
   const onBigPictureEscPress = (evt) => {
@@ -75,9 +90,16 @@
       const pictureId = evt.target.closest(`.picture`).id;
       const pictureData = window.pictures.picturesData.find((item) => item.id === pictureId);
       fillBigPicture(pictureData);
-      hideElements();
       showBigPicture();
     }
+  });
+
+  commentsLoaderBtn.addEventListener(`click`, () => {
+    loadMoreComments();
+  });
+
+  commentsLoaderBtn.addEventListener(`keydown`, (evt) => {
+    doIfEnterEvent(evt, loadMoreComments);
   });
 
   window.preview = preview;
