@@ -73,7 +73,7 @@
   picturesSection.addEventListener(`click`, (evt) => {
     if (evt.target.closest(`.picture`) !== null) {
       const pictureId = evt.target.closest(`.picture`).id;
-      const pictureData = window.picture.picturesData.find((item) => item.id === pictureId);
+      const pictureData = window.pictures.picturesData.find((item) => item.id === pictureId);
       fillBigPicture(pictureData);
       hideElements();
       showBigPicture();

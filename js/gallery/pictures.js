@@ -7,8 +7,11 @@
   const userPictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
+  const imgFiltersContainer = document.querySelector(`.img-filters`);
+  const usersPictures = document.querySelector(`.pictures`);
 
-  const picture = {};
+  const pictures = {};
+  pictures.picturesData = [];
 
   const createPictureElement = (pictureObj) => {
     const pictureElement = userPictureTemplate.cloneNode(true);
@@ -21,25 +24,37 @@
     return pictureElement;
   };
 
+  const clearUserPictures = () => {
+    const oldPictures = Array.from(usersPictures.querySelectorAll(`.picture`));
+    oldPictures.forEach((elem) => usersPictures.removeChild(elem));
+  };
+
   const renderPictures = (picturesData) => {
     const fragment = document.createDocumentFragment();
-    const usersPictures = document.querySelector(`.pictures`);
 
     picturesData.forEach((pictureObj, index) => {
       pictureObj.id = `photo-${index}`;
       const pictureEl = createPictureElement(pictureObj);
       fragment.appendChild(pictureEl);
     });
+    clearUserPictures();
 
     usersPictures.appendChild(fragment);
   };
 
+  const showImgFiltersContainer = () => {
+    imgFiltersContainer.classList.remove(`img-filters--inactive`);
+  };
+
   const onLoadPictures = (picturesData) => {
     renderPictures(picturesData);
-    window.picture.picturesData = [...picturesData];
+    window.pictures.picturesData = [...picturesData];
+    showImgFiltersContainer();
   };
 
   backendLoad(onLoadPictures, onLoadErrorCallback);
 
-  window.picture = picture;
+  pictures.render = renderPictures;
+
+  window.pictures = pictures;
 })();
