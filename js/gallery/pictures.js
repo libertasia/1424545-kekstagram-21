@@ -10,8 +10,8 @@
   const imgFiltersContainer = document.querySelector(`.img-filters`);
   const usersPictures = document.querySelector(`.pictures`);
 
-  const picture = {};
-  picture.picturesData = [];
+  const pictures = {};
+  pictures.picturesData = [];
 
   const createPictureElement = (pictureObj) => {
     const pictureElement = userPictureTemplate.cloneNode(true);
@@ -48,13 +48,13 @@
 
   const onLoadPictures = (picturesData) => {
     renderPictures(picturesData);
-    window.picture.picturesData = [...picturesData];
+    window.pictures.picturesData = [...picturesData];
     showImgFiltersContainer();
   };
 
   backendLoad(onLoadPictures, onLoadErrorCallback);
 
-  picture.renderPictures = renderPictures;
+  pictures.render = renderPictures;
 
-  window.picture = picture;
+  window.pictures = pictures;
 })();

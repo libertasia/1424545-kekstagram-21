@@ -1,22 +1,20 @@
 'use strict';
 
 (function () {
+  const DEBOUNCE_INTERVAL = 500; // ms
   const PICTURES_COUNT = 10;
 
   const getRandomInt = window.util.getRandomInt;
-  const renderPictures = window.picture.renderPictures;
+  const renderPictures = window.pictures.render;
+  const isPropertyValueUsed = window.util.isPropertyValueUsed;
+  const debounce = window.util.debounce;
 
-  const defaultBtn = document.querySelector(`#filter-default`);
-  const randomBtn = document.querySelector(`#filter-random`);
-  const discussedBtn = document.querySelector(`#filter-discussed`);
+  const filtersForm = document.querySelector(`.img-filters__form`);
 
-  const isPropertyValueUsed = (propertyName, propertyValue, objArray) => {
-    for (let i = 0; i < objArray.length; i++) {
-      if (propertyValue === objArray[i][propertyName]) {
-        return true;
-      }
-    }
-    return false;
+  const filtersType = {
+    'filter-default': defaultFilter,
+    'filter-random': randomFilter,
+    'filter-discussed': discussedFilter
   };
 
   const generateRandomPictures = (count) => {
@@ -24,7 +22,7 @@
     let picture = {};
     for (let i = 0; i < count; i++) {
       do {
-        picture = window.picture.picturesData[getRandomInt(0, window.picture.picturesData.length - 1)];
+        picture = window.pictures.picturesData[getRandomInt(0, window.pictures.picturesData.length - 1)];
       }
       while (isPropertyValueUsed(`id`, picture.id, randomPictures));
 
@@ -33,20 +31,10 @@
     return randomPictures;
   };
 
-  const getRank = (picture) => {
-    return picture.comments.length;
-  };
-
-  const sortPictures = (pictures) => {
-    const sortedPictures = pictures.sort((left, right) => {
-      const rankDiff = getRank(right) - getRank(left);
-      return rankDiff;
-    });
-    return sortedPictures;
-  };
-
-  const generateDiscussedPictures = () => {
-    return sortPictures(window.picture.picturesData);
+  const generateDiscussedPictures = (data) => {
+    const discussedPictures = data.slice(0);
+    return discussedPictures.sort((a, b) => b.comments.length - a.comments.length
+    );
   };
 
   const setActiveBtn = (btn) => {
@@ -57,23 +45,25 @@
     }
   };
 
-  const onDefaultBtnClick = (evt) => {
-    setActiveBtn(evt.target);
-    renderPictures(window.picture.picturesData);
+  const defaultFilter = () => {
+    return window.pictures.picturesData;
   };
 
-  const onRandomBtnClick = (evt) => {
-    setActiveBtn(evt.target);
-    renderPictures(generateRandomPictures(PICTURES_COUNT));
+  const randomFilter = () => {
+    return generateRandomPictures(PICTURES_COUNT);
   };
 
-  const onDiscussedBtnClick = (evt) => {
-    setActiveBtn(evt.target);
-    renderPictures(generateDiscussedPictures());
+  const discussedFilter = () => {
+    return generateDiscussedPictures(window.pictures.picturesData);
   };
 
-  defaultBtn.addEventListener(`click`, onDefaultBtnClick);
-  randomBtn.addEventListener(`click`, window.debounce(onRandomBtnClick));
-  discussedBtn.addEventListener(`click`, onDiscussedBtnClick);
+  const onFiltersFormClick = ({target}) => {
+    let currentFilter = target.id;
+    const filteredData = filtersType[currentFilter]();
 
+    setActiveBtn(target);
+    renderPictures(filteredData);
+  };
+
+  filtersForm.addEventListener(`click`, debounce(onFiltersFormClick, DEBOUNCE_INTERVAL));
 })();
