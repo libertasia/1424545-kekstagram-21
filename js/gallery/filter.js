@@ -4,6 +4,7 @@
   const DEBOUNCE_INTERVAL = 500; // ms
   const PICTURES_COUNT = 10;
 
+  const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
   const getRandomInt = window.util.getRandomInt;
   const renderPictures = window.pictures.render;
   const isPropertyValueUsed = window.util.isPropertyValueUsed;
@@ -31,11 +32,11 @@
     );
   };
 
-  const setActiveBtn = (btn) => {
+  const onActiveBtnClick = ({target}) => {
     const prevBtn = document.querySelector(`.img-filters__button--active`);
-    if (prevBtn !== btn) {
+    if (prevBtn !== target) {
       prevBtn.classList.remove(`img-filters__button--active`);
-      btn.classList.add(`img-filters__button--active`);
+      target.classList.add(`img-filters__button--active`);
     }
   };
 
@@ -61,9 +62,14 @@
     let currentFilter = target.id;
     const filteredData = filtersType[currentFilter]();
 
-    setActiveBtn(target);
     renderPictures(filteredData);
   };
 
   filtersForm.addEventListener(`click`, debounce(onFiltersFormClick, DEBOUNCE_INTERVAL));
+
+  filtersForm.addEventListener(`mouseup`, onActiveBtnClick);
+
+  filtersForm.addEventListener(`keydown`, (evt) => {
+    doIfEnterEvent(evt, onActiveBtnClick);
+  });
 })();

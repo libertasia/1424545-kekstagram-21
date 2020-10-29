@@ -44,7 +44,7 @@
 
   keyboard.doIfEnterEvent = (evt, callback) => {
     if (evt.key === Key.ENTER) {
-      callback();
+      callback(evt);
     }
   };
 
