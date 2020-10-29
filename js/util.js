@@ -24,7 +24,7 @@
   };
 
   util.debounce = (cb, interval = 500) => {
-    const lastTimeout = null;
+    let lastTimeout = null;
 
     return (...parameters) => {
       if (lastTimeout) {

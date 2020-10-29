@@ -11,12 +11,6 @@
 
   const filtersForm = document.querySelector(`.img-filters__form`);
 
-  const filtersType = {
-    'filter-default': defaultFilter,
-    'filter-random': randomFilter,
-    'filter-discussed': discussedFilter
-  };
-
   const generateRandomPictures = (count) => {
     const randomPictures = [];
     let picture = {};
@@ -55,6 +49,12 @@
 
   const discussedFilter = () => {
     return generateDiscussedPictures(window.pictures.picturesData);
+  };
+
+  const filtersType = {
+    'filter-default': defaultFilter,
+    'filter-random': randomFilter,
+    'filter-discussed': discussedFilter
   };
 
   const onFiltersFormClick = ({target}) => {
