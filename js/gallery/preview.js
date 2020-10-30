@@ -50,6 +50,11 @@
     commentsLoaderBtn.classList.add(`hidden`);
   };
 
+  const showLoadCommentsBtn = () => {
+    bigPicture.querySelector(`.social__comment-count`).classList.remove(`hidden`);
+    commentsLoaderBtn.classList.remove(`hidden`);
+  };
+
   const loadMoreComments = () => {
     const comments = currentPicture.comments.slice(visibleCommentsCount, visibleCommentsCount + COMMENTS_COUNT).map((comment) => createSocialComment(comment));
     bigPicture.querySelector(`.social__comments`).innerHTML += comments.join(``);
@@ -66,6 +71,7 @@
   const showBigPicture = () => {
     bigPicture.classList.remove(`hidden`);
     pageBody.classList.add(`modal-open`);
+    showLoadCommentsBtn();
 
     document.addEventListener(`keydown`, onBigPictureEscPress);
   };
