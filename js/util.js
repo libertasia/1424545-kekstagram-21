@@ -15,12 +15,7 @@
   };
 
   util.isPropertyValueUsed = (propertyName, propertyValue, objArray) => {
-    for (let i = 0; i < objArray.length; i++) {
-      if (propertyValue === objArray[i][propertyName]) {
-        return true;
-      }
-    }
-    return false;
+    return objArray.some((element) => propertyValue === element[propertyName]);
   };
 
   util.debounce = (cb, interval = 500) => {
