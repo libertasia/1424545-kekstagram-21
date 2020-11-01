@@ -13,6 +13,7 @@
   const bigPicture = document.querySelector(`.big-picture`);
   const bigPictureCloseBtn = bigPicture.querySelector(`.big-picture__cancel`);
   const commentsLoaderBtn = bigPicture.querySelector(`.comments-loader`);
+  const commentsCountDiv = bigPicture.querySelector(`.social__comment-count`);
 
   const preview = {};
   let currentPicture;
@@ -36,22 +37,20 @@
   const fillBigPicture = (picture) => {
     bigPicture.querySelector(`.big-picture__img`).querySelector(`img`).src = picture.url;
     bigPicture.querySelector(`.likes-count`).textContent = picture.likes;
-    bigPicture.querySelector(`.comments-count`).textContent = picture.comments.length;
     bigPicture.querySelector(`.social__caption`).textContent = picture.description;
 
     const comments = picture.comments.slice(0, COMMENTS_COUNT).map((comment) => createSocialComment(comment));
     bigPicture.querySelector(`.social__comments`).innerHTML = comments.join(``);
     currentPicture = picture;
     visibleCommentsCount = comments.length;
+    commentsCountDiv.textContent = `${visibleCommentsCount} из ${picture.comments.length} комментариев`;
   };
 
   const hideLoadCommentsBtn = () => {
-    bigPicture.querySelector(`.social__comment-count`).classList.add(`hidden`);
     commentsLoaderBtn.classList.add(`hidden`);
   };
 
   const showLoadCommentsBtn = () => {
-    bigPicture.querySelector(`.social__comment-count`).classList.remove(`hidden`);
     commentsLoaderBtn.classList.remove(`hidden`);
   };
 
@@ -59,6 +58,7 @@
     const comments = currentPicture.comments.slice(visibleCommentsCount, visibleCommentsCount + COMMENTS_COUNT).map((comment) => createSocialComment(comment));
     bigPicture.querySelector(`.social__comments`).innerHTML += comments.join(``);
     visibleCommentsCount += comments.length;
+    commentsCountDiv.textContent = `${visibleCommentsCount} из ${currentPicture.comments.length} комментариев`;
     if (visibleCommentsCount === currentPicture.comments.length) {
       hideLoadCommentsBtn();
     }
@@ -71,7 +71,12 @@
   const showBigPicture = () => {
     bigPicture.classList.remove(`hidden`);
     pageBody.classList.add(`modal-open`);
-    showLoadCommentsBtn();
+
+    if (currentPicture.comments.length > COMMENTS_COUNT) {
+      showLoadCommentsBtn();
+    } else {
+      hideLoadCommentsBtn();
+    }
 
     document.addEventListener(`keydown`, onBigPictureEscPress);
   };
