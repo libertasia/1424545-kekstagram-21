@@ -1,5 +1,5 @@
 'use strict';
-// Загрузка изображения и показ формы редактирования:
+// Показ формы редактирования:
 
 const MAX_IMG_SIZE_VALUE = `100%`;
 
@@ -26,6 +26,7 @@ const form = {};
 
 form.hashtagsInput = hashtagsInput;
 form.effectLevelSlider = effectLevelSlider;
+form.uploadFileInput = uploadFileInput;
 
 const onPopupEscPress = (evt) => {
   if (document.activeElement !== hashtagsInput && document.activeElement !== commentInput) {
