@@ -1,75 +1,74 @@
 'use strict';
 
-(function () {
-  const DEBOUNCE_INTERVAL = 500; // ms
-  const PICTURES_COUNT = 10;
+const DEBOUNCE_INTERVAL = 500; // ms
+const PICTURES_COUNT = 10;
 
-  const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
-  const getRandomInt = window.util.getRandomInt;
-  const renderPictures = window.pictures.render;
-  const isPropertyValueUsed = window.util.isPropertyValueUsed;
-  const debounce = window.util.debounce;
+const doIfEnterEvent = window.util.keyboard.doIfEnterEvent;
+const getRandomInt = window.util.getRandomInt;
+const renderPictures = window.pictures.render;
+const isPropertyValueUsed = window.util.isPropertyValueUsed;
+const debounce = window.util.debounce;
 
-  const filtersForm = document.querySelector(`.img-filters__form`);
+const filtersForm = document.querySelector(`.img-filters__form`);
 
-  const generateRandomPictures = (count) => {
-    const randomPictures = [];
-    let picture = {};
-    for (let i = 0; i < count; i++) {
-      do {
-        picture = window.pictures.picturesData[getRandomInt(0, window.pictures.picturesData.length - 1)];
-      }
-      while (isPropertyValueUsed(`id`, picture.id, randomPictures));
-
-      randomPictures.push(picture);
+const generateRandomPictures = (count) => {
+  const randomPictures = [];
+  let picture = {};
+  for (let i = 0; i < count; i++) {
+    do {
+      picture = window.pictures.picturesData[getRandomInt(0, window.pictures.picturesData.length - 1)];
     }
-    return randomPictures;
-  };
+    while (isPropertyValueUsed(`id`, picture.id, randomPictures));
 
-  const generateDiscussedPictures = (data) => {
-    const discussedPictures = data.slice(0);
-    return discussedPictures.sort((a, b) => b.comments.length - a.comments.length
-    );
-  };
+    randomPictures.push(picture);
+  }
+  return randomPictures;
+};
 
-  const onActiveBtnClick = ({target}) => {
-    const prevBtn = document.querySelector(`.img-filters__button--active`);
-    if (prevBtn !== target) {
-      prevBtn.classList.remove(`img-filters__button--active`);
-      target.classList.add(`img-filters__button--active`);
-    }
-  };
+const generateDiscussedPictures = (data) => {
+  const discussedPictures = data.slice(0);
+  return discussedPictures.sort((a, b) => b.comments.length - a.comments.length
+  );
+};
 
-  const defaultFilter = () => {
-    return window.pictures.picturesData;
-  };
+const onActiveBtnClick = ({target}) => {
+  const prevBtn = document.querySelector(`.img-filters__button--active`);
+  if (prevBtn !== target) {
+    prevBtn.classList.remove(`img-filters__button--active`);
+    target.classList.add(`img-filters__button--active`);
+  }
+};
 
-  const randomFilter = () => {
-    return generateRandomPictures(PICTURES_COUNT);
-  };
+const defaultFilter = () => {
+  return window.pictures.picturesData;
+};
 
-  const discussedFilter = () => {
-    return generateDiscussedPictures(window.pictures.picturesData);
-  };
+const randomFilter = () => {
+  return generateRandomPictures(PICTURES_COUNT);
+};
 
-  const filtersType = {
-    'filter-default': defaultFilter,
-    'filter-random': randomFilter,
-    'filter-discussed': discussedFilter
-  };
+const discussedFilter = () => {
+  return generateDiscussedPictures(window.pictures.picturesData);
+};
 
-  const onFiltersFormClick = ({target}) => {
-    let currentFilter = target.id;
-    const filteredData = filtersType[currentFilter]();
+const filtersType = {
+  'filter-default': defaultFilter,
+  'filter-random': randomFilter,
+  'filter-discussed': discussedFilter
+};
 
-    renderPictures(filteredData);
-  };
+const onFiltersFormClick = ({target}) => {
+  let currentFilter = target.id;
+  const filteredData = filtersType[currentFilter]();
 
-  filtersForm.addEventListener(`click`, debounce(onFiltersFormClick, DEBOUNCE_INTERVAL));
+  renderPictures(filteredData);
+};
 
-  filtersForm.addEventListener(`mouseup`, onActiveBtnClick);
+filtersForm.addEventListener(`click`, debounce(onFiltersFormClick, DEBOUNCE_INTERVAL));
 
-  filtersForm.addEventListener(`keydown`, (evt) => {
-    doIfEnterEvent(evt, onActiveBtnClick);
-  });
-})();
+filtersForm.addEventListener(`mouseup`, onActiveBtnClick);
+
+filtersForm.addEventListener(`keydown`, (evt) => {
+  doIfEnterEvent(evt, onActiveBtnClick);
+});
+

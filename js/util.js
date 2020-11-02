@@ -1,49 +1,47 @@
 'use strict';
 
-(function () {
-  const Key = {
-    ESC: `Escape`,
-    ENTER: `Enter`
-  };
+const Key = {
+  ESC: `Escape`,
+  ENTER: `Enter`
+};
 
-  const util = {};
+const util = {};
 
-  const keyboard = {};
+const keyboard = {};
 
-  util.getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
+util.getRandomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
-  util.isPropertyValueUsed = (propertyName, propertyValue, objArray) => {
-    return objArray.some((element) => propertyValue === element[propertyName]);
-  };
+util.isPropertyValueUsed = (propertyName, propertyValue, objArray) => {
+  return objArray.some((element) => propertyValue === element[propertyName]);
+};
 
-  util.debounce = (cb, interval = 500) => {
-    let lastTimeout = null;
+util.debounce = (cb, interval = 500) => {
+  let lastTimeout = null;
 
-    return (...parameters) => {
-      if (lastTimeout) {
-        window.clearTimeout(lastTimeout);
-      }
-      lastTimeout = window.setTimeout(() => {
-        cb(...parameters);
-      }, interval);
-    };
-  };
-
-  keyboard.doIfEscEvent = (evt, callback) => {
-    if (evt.key === Key.ESC) {
-      callback();
+  return (...parameters) => {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
     }
+    lastTimeout = window.setTimeout(() => {
+      cb(...parameters);
+    }, interval);
   };
+};
 
-  keyboard.doIfEnterEvent = (evt, callback) => {
-    if (evt.key === Key.ENTER) {
-      callback(evt);
-    }
-  };
+keyboard.doIfEscEvent = (evt, callback) => {
+  if (evt.key === Key.ESC) {
+    callback();
+  }
+};
 
-  util.keyboard = keyboard;
+keyboard.doIfEnterEvent = (evt, callback) => {
+  if (evt.key === Key.ENTER) {
+    callback(evt);
+  }
+};
 
-  window.util = util;
-})();
+util.keyboard = keyboard;
+
+window.util = util;
