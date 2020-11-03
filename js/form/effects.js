@@ -6,7 +6,7 @@ const MAX_EFFECT_LEVEL_VALUE = 100;
 const uploadFileContainer = window.pictureSize.uploadFileContainer;
 const imgUploadPreview = window.pictureSize.imgUploadPreview;
 const effectLevelSlider = window.form.effectLevelSlider;
-const initSlider = window.slider.initSlider;
+const initSlider = window.slider.init;
 
 const effectLevelPin = uploadFileContainer.querySelector(`.effect-level__pin`);
 const effectLevelDepth = uploadFileContainer.querySelector(`.effect-level__depth`);

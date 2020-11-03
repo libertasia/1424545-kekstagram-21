@@ -42,7 +42,7 @@ const onEffectLevelPinMouseDown = (evt, callback) => {
   document.addEventListener(`mouseup`, onEffectLevelPinMouseUp);
 };
 
-slider.initSlider = (callback) => {
+slider.init = (callback) => {
   effectLevelPin.addEventListener(`mousedown`, (evt) => {
     if (typeof callback === `function`) {
       onEffectLevelPinMouseDown(evt, callback);
