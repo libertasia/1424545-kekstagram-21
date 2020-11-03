@@ -9,7 +9,7 @@ const pageBody = window.preview.pageBody;
 const uploadFileContainer = window.pictureSize.uploadFileContainer;
 const imgSizeValueInput = window.pictureSize.imgSizeValueInput;
 const imgUploadPreview = window.pictureSize.imgUploadPreview;
-const changePictureSize = window.pictureSize.changePictureSize;
+const changePictureSize = window.pictureSize.change;
 const backendSave = window.backend.save;
 const onUploadSuccessCallback = window.uploadResult.onUploadSuccessCallback;
 const onUploadErrorCallback = window.uploadResult.onUploadErrorCallback;
@@ -77,14 +77,14 @@ uploadFileCloseBtn.addEventListener(`keydown`, (evt) => {
   doIfEnterEvent(evt, closePopup);
 });
 
-const onImgFormUpload = (evt) => {
+const onImgFormSubmit = (evt) => {
   evt.preventDefault();
   const formData = new FormData(imgUploadForm);
   backendSave(formData, onUploadSuccessCallback, onUploadErrorCallback);
   closePopup();
 };
 
-imgUploadForm.addEventListener(`submit`, onImgFormUpload);
+imgUploadForm.addEventListener(`submit`, onImgFormSubmit);
 
 window.form = form;
 

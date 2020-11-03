@@ -50,5 +50,5 @@ decreaseImgSizeBtn.addEventListener(`click`, () => {
   changePictureSize();
 });
 
-pictureSize.changePictureSize = changePictureSize;
+pictureSize.change = changePictureSize;
 window.pictureSize = pictureSize;
