@@ -4,6 +4,11 @@ const URL_LOAD = `https://21.javascript.pages.academy/kekstagram/data`;
 const URL_SAVE = `https://21.javascript.pages.academy/kekstagram`;
 const TIMEOUT_IN_MS = 10000;
 
+const HttpRequest = {
+  GET: `GET`,
+  POST: `POST`
+};
+
 const StatusCode = {
   OK: 200
 };
@@ -44,14 +49,14 @@ const createRequestObject = (onLoad, onError) => {
 backend.load = (onLoad, onError) => {
   const xhr = createRequestObject(onLoad, onError);
 
-  xhr.open(`GET`, URL_LOAD);
+  xhr.open(HttpRequest.GET, URL_LOAD);
   xhr.send();
 };
 
 backend.save = (data, onLoad, onError) => {
   const xhr = createRequestObject(onLoad, onError);
 
-  xhr.open(`POST`, URL_SAVE);
+  xhr.open(HttpRequest.POST, URL_SAVE);
   xhr.send(data);
 };
 
