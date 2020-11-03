@@ -10,6 +10,7 @@ module.exports = {
     "./js/form/picture-size.js",
     "./js/form/upload-result.js",
     "./js/form/form.js",
+    "./js/form/upload-img.js",
     "./js/form/slider.js",
     "./js/form/effects.js",
     "./js/form/valid.js"
